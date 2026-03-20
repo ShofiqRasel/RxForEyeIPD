@@ -100,3 +100,37 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+
+/* 1. Force the layout to stack vertically instead of side-by-side */
+.page {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Completely hide the default Blazor top-row and sidebar containers */
+.sidebar, .top-row {
+    display: none !important;
+}
+
+/* 3. Fix the Navbar Brand and ensure it doesn't have the grey background */
+.navbar-brand {
+    font-size: 1.5rem;
+    padding: 0;
+    margin-right: 2rem;
+}
+
+/* 4. Fix the search bar sizing and alignment */
+.navbar .form-control {
+    max-width: 300px;
+}
+
+/* 5. Ensure the body content starts below the navbar and fills the screen */
+main {
+    flex: 1;
+    width: 100%;
+}
+
+.content {
+    padding: 2rem !important;
+}
