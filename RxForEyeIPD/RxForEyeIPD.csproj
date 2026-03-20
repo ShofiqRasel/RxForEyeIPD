@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Models\" />
+    <Folder Include="Services\" />
+    <Folder Include="Files\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.DataForm" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Layouts" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.PivotTable" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="33.1.44" />
+    <PackageReference Include="Syncfusion.Blazor.TreeGrid" Version="33.1.44" />
+  </ItemGroup>
+
+</Project>
