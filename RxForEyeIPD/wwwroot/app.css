@@ -134,3 +134,26 @@ main {
 .content {
     padding: 2rem !important;
 }
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar .nav-link {
+    display: flex;
+    align-items: center;
+}
+
+/* Fix dropdown vertical shift */
+.dropdown-menu {
+    margin-top: 0;
+}
+
+/* Prevent weird spacing from Blazor */
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+.material-symbols-outlined {
+    vertical-align: middle;
+}
+
