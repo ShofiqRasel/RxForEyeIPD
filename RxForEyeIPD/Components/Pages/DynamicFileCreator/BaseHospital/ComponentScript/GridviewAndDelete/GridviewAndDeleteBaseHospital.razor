@@ -1,0 +1,124 @@
+@page "/basehospitallist" 
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript
+@using Syncfusion.Blazor.Grids
+@rendermode InteractiveServer
+@inject IBaseHospital BaseHospitalService
+@inject NavigationManager Nav
+<PageTitle>List of BaseHospital</PageTitle>
+<h3>List of BaseHospital</h3>
+<div class="container-fluid">
+    <div class="row pb-2">
+        <div class="col-12 text-end">
+            @* Set your href manually according to your need. *@ 
+        <a class="btn btn-sm btn-primary" href="/basehospital">
+                New Entry
+            </a>
+        </div>
+    </div>
+    <div class="row pb-2">
+        @if (BaseHospitals == null || BaseHospitals.Count == 0)
+        {
+            <div class="col-md-12">
+                <p>No BaseHospital found.</p>
+            </div>
+        }
+        else
+
+        {
+            <div class="col-md-12">
+                <SfGrid DataSource="@BaseHospitals" AllowPaging="true" class="pb-3">
+                    <GridPageSettings PageSize="5"></GridPageSettings>
+                    <GridColumns>
+                        <GridColumn Field="BaseHospitalId" HeaderText="Hospital Id" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalName" HeaderText="Hospital Name" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalContact" HeaderText="Hospital Contact" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalEmail" HeaderText="Hospital Email" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalAddress" HeaderText="Full Address" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalDialogue" HeaderText="Dialogue" Width="100"></GridColumn>
+                        <GridColumn Field="BaseHospitalMessage" HeaderText="Message" Width="100"></GridColumn>
+                        <GridColumn HeaderText="Hospital Logo" Width="100" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    // বর্তমান রো-এর ডেটা এক্সেস করা
+                                    var user = (context as BaseHospitalEntity);
+                                    if (user != null && user.BaseHospitalLogo != null)
+                                    {
+                                        <img src="@ConvertToImage(user.BaseHospitalLogo)" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        // ডাটা না থাকলে একটি আইকন বা টেক্সট দেখান
+                                        <div class="no-image">
+                                            <img src="Images/MiscImage/default-avatar.png" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                                        </div>
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Actions" Width="100">
+                            <Template>
+                                @{
+                                    var row = context as BaseHospitalEntity;
+                                }
+                                @if (row == null) { return; }
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-primary" @onclick="() => EditRow(row.BaseHospitalId)">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteRow(row.BaseHospitalId)">
+                                        Delete
+                                    </button>
+                                </div>
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    public List<BaseHospitalEntity> BaseHospitals = new();
+    private BaseHospitalEntity BaseHospitalEntity = new();
+    protected override async Task OnInitializedAsync()
+    {
+        BaseHospitals = await BaseHospitalService.GetAllBaseHospital();
+    }
+
+    private async Task EditRow(int id)
+    {
+        Task.Delay(500).Wait();
+        Nav.NavigateTo($"/basehospital/{id}");
+    }
+
+    private async Task DeleteRow(int id)
+    {
+        int isSuccess;
+        BaseHospitalEntity.BaseHospitalId = id;
+        BaseHospitalEntity.DeletedBy = 1; // Set the deletedBy property as needed
+        isSuccess = await BaseHospitalService.DeleteBaseHospital(BaseHospitalEntity);
+        if (isSuccess>0)
+        {
+            BaseHospitals = await BaseHospitalService.GetAllBaseHospital();
+            StateHasChanged();
+        }
+        else
+        {
+            // Optionally show an error message
+        }
+             
+    }
+
+    public string ConvertToImage(byte[] imageBytes)
+    {
+        if (imageBytes != null && imageBytes.Length > 0)
+        {
+            // byte[] কে base64 string এ রূপান্তর করা হচ্ছে
+            string base64 = Convert.ToBase64String(imageBytes);
+            return $"data:image/png;base64,{base64}";
+        }
+        return "Images/MiscImage/default-avatar.png"; // ছবি না থাকলে ডিফল্ট ছবি
+    }
+}

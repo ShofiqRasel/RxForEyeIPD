@@ -1,0 +1,433 @@
+﻿@page "/menubar-features"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.SplitButtons
+@using System.Security.Claims
+@rendermode InteractiveServer
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">IPD Management System</a>
+
+        <!-- Toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links - all right aligned -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <!-- ms-auto pushes everything to the right -->
+                <!-- Patient -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#">
+                        <i class="e-icons e-people"></i> Patient
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <!-- Submenu -->
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                <i class="fa-solid fa-user-doctor"></i> Op Management
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="e-icons e-edit"></i> New Registration </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-cash-register"></i> Billing </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/visual-acuity"> <i class="fa-solid fa-magnifying-glass-plus"></i> VA & Refraction </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/historyandcomplaints"> <i class="fa fa-history"></i> History & Comp. </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/dynamicparentcomponent"> <i class="fa fa-history"></i> Dynamic Component </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/doctorexam"> <i class="fas fa-user-md"></i> Doctor Exam </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/counselling"> <i class="fas fa-hands-helping"></i> Counselling </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescription"> <i class="fa-solid fa-prescription"></i> Medicine Prescription </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescriptionwithdeleteupdate"> <i class="fa-solid fa-prescription"></i> Prescription With Edit Delete</a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-regular fa-folder-closed"></i> Medical Record </a> </li>
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="/smooth-scroll"> <i class="fa-regular fa-folder-closed"></i> Smooth Scroll </a> </li>
+                            </ul>
+                        </li>
+
+                        <!-- Submenu -->
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                <i class="fa-regular fa-file-lines"></i> Reports
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-search"></i> Cencus </a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Outreach -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#">
+                        <i class="e-icons e-objects"></i> Outreach
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-mountain-sun"></i> RREC </a> </li>
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-graduation-cap"></i> SSTP </a> </li>
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-person-chalkboard"></i> PTTP </a> </li>
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-user-doctor"></i> VDTP </a> </li>
+                    </ul>
+                </li>
+
+
+                <!-- User Account -->
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#">
+                        <i class="e-icons e-user"></i><span> User</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="/basehospitallist"> <i class="fa-solid fa-edit"></i> Base Master </a> </li>
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="/branchunit"> <i class="fa-solid fa-edit"></i> Branch Master </a> </li>
+                        <li> <a class="dropdown-item text-decoration-none p-2" href="/user"> <i class="fa-solid fa-edit"></i> User Master </a> </li>
+
+                    </ul>
+                </li>
+
+
+
+
+
+
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+@* @page "/menubar-features"
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Navigations
+@rendermode InteractiveServer
+
+<PageTitle>Menu Bar</PageTitle>
+
+<div id="ControlRegion">
+    <div class="menu-control">
+        <SfMenu Items="@MenuData">
+        </SfMenu>
+    </div>
+</div>
+<style>
+
+    @@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+    .material-icon-search::before {
+        font-family: 'Material Icons';
+        content: 'receipt';
+        font-size: 18px; /* adjust as needed */
+        vertical-align: middle;
+    }
+</style>
+
+
+<style>
+
+
+    /* @@font-face {
+                    font-family: 'em-icons';
+                    src: url(data:application/x-font-ttf;charset=utf-8;base64,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) format('truetype');
+                    font-weight: normal;
+                    font-style: normal;
+                }
+
+                .em-icons {
+                    font-family: 'em-icons';
+                }
+
+                .e-file::before {
+                    content: '\e705';
+                }
+
+                .e-edit::before {
+                    content: '\e701';
+                }
+
+                .e-tool::before {
+                    content: '\e7cf';
+                }
+
+                .e-cut::before {
+                    content: '\e704';
+                }
+
+                .e-copy::before {
+                    content: '\e705';
+                }
+
+                .e-paste::before {
+                    content: '\e706';
+                }
+
+                .e-open::before {
+                    content: '\e702';
+                }
+
+                .e-save::before {
+                    content: '\e703';
+                }
+
+                .e-clock::before {
+                    content: '\e706';
+                }
+
+            .menu-control {
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .ulstyle {
+                margin: 0px;
+                padding-left: 20px;
+                display: inline-block;
+            }
+
+            .list {
+                float: left;
+                line-height: 20px;
+                margin: 10px;
+                min-width: 230px;
+                }*/
+</style>
+@code {
+#pragma warning disable
+    private List<MenuItem> MenuData = new List<MenuItem>
+    {
+            new MenuItem
+            {
+                Text = "Patient",
+                IconCss = "e-icons e-people",
+                Url = "/counter",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem
+                    {
+                        Text = "OP Management",
+                        IconCss = "fa-solid fa-user-doctor",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "New Registration", IconCss = "e-icons e-edit"},
+                            new MenuItem { Text = "Billing", IconCss = "fa-solid fa-cash-register"},
+                            new MenuItem { Text = "Medical Record", IconCss = "fa-regular fa-folder-closed"},
+                            new MenuItem { Text = "Glass Prescription", IconCss = "fa-solid fa-magnifying-glass-plus"},
+                            new MenuItem { Text = "Medicine Prescription", IconCss = "fa-solid fa-prescription"}
+                        }
+                    },
+                   new MenuItem
+                    {
+                        Text = "Investigation",
+                        IconCss = "fa-solid fa-flask-vial",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Opd Investigation", IconCss = "fa-solid fa-microscope"},
+                            new MenuItem { Text = "IPD Investigation", IconCss = "fa-solid fa-stethoscope"}
+                        }
+                    },
+                    new MenuItem
+                    {
+                        Text = "IP Management",
+                        IconCss = "fa-solid fa-bed-pulse",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Surgery Schedule", IconCss = "fa-solid fa-clock"},
+                            new MenuItem { Text = "Surgery Updation", IconCss = "fa-solid fa-file-pen"},
+                            new MenuItem { Text = "Discharge Summary", IconCss = "fa-regular fa-file-pdf"},
+                            new MenuItem { Text = "Discharge", IconCss = "fa-solid fa-person-walking-arrow-right"}
+                        }
+                    },
+
+                    new MenuItem { Separator= true },
+                    new MenuItem
+                    {
+                        Text = "Telemedicine",
+                        IconCss = "fa-solid fa-headset"
+                    },
+                    new MenuItem
+                    {
+                        Text = "Reports",
+                        IconCss = "fa-regular fa-file-lines",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Cencus", IconCss = "material-icon-search"}
+                        }
+                    }
+                }
+            },
+            new
+            MenuItem {
+                Text = "Optical",
+                IconCss = "fa-solid fa-glasses",
+                Url= "/",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem
+                    {
+                        Text = "Sales Items",
+                        IconCss = "fa-solid fa-cash-register",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Order Entry", IconCss = "fa-solid fa-magnifying-glass-plus"},
+                            new MenuItem { Text = "Delivery Entry", IconCss = "fa-solid fa-truck"},
+                            new MenuItem { Text = "Cancel Entry", IconCss = "fa-regular fa-rectangle-xmark"}
+                        }
+                    },
+                    new MenuItem
+                    {
+                        Text = "Optical Master",
+                        IconCss = "fa-solid fa-database",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "New Item", IconCss = "fa-solid fa-magnifying-glass-plus"},
+                            new MenuItem { Text = "New Supplier", IconCss = "fa-solid fa-truck"},
+                            new MenuItem { Text = "New Company", IconCss = "fa-solid fa-building-user"}
+                        }
+                    },
+                   new MenuItem { Separator= true },
+                   new MenuItem
+                    {
+                        Text = "Optical Reports",
+                        IconCss = "fa-regular fa-file-lines",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Direct Sales Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Daily Advcnce Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Total Collection", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Consolidated", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Purchase Optical Items", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Bill Cancellation Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Purchase Return Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Total Stock movement", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Present Stock", IconCss = "e-icons e-button-field"}
+                        }
+                    }
+
+                }
+            },
+            new MenuItem
+            {
+                Text = "Medicine",
+                IconCss = "fa-solid fa-pills",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem
+                    {
+                        Text = "Sales Items",
+                        IconCss = "fa-solid fa-cash-register",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Order Entry", IconCss = "fa-solid fa-file-prescription"},
+                            new MenuItem { Text = "Delivery Entry", IconCss = "fa-solid fa-truck"},
+                            new MenuItem { Text = "Cancel Entry", IconCss = "fa-regular fa-rectangle-xmark"}
+                        }
+                    },
+                    new MenuItem
+                    {
+                        Text = "Medicine Master",
+                        IconCss = "fa-solid fa-database",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "New Item", IconCss = "fa-solid fa-square-plus"},
+                            new MenuItem { Text = "New Supplier", IconCss = "fa-solid fa-briefcase"},
+                            new MenuItem { Text = "New Company", IconCss = "fa-solid fa-building-circle-check"}
+                        }
+                    },
+                   new MenuItem { Separator= true },
+                   new MenuItem
+                    {
+                        Text = "Medicine Reports",
+                        IconCss = "fa-regular fa-file-lines",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Direct Sales Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Daily Advcnce Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Total Collection", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Consolidated", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Purchase Optical Items", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Bill Cancellation Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Purchase Return Detail", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Total Stock movement", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Present Stock", IconCss = "e-icons e-button-field"}
+                        }
+                    }
+                }
+            },
+            new MenuItem
+            {
+               Text = "Settings",
+               IconCss = "e-icons e-settings",
+               Items = new List<MenuItem>()
+                {
+                    new MenuItem
+                    {
+                        Text = "Location Master",
+                        IconCss = "fa-solid fa-database",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Division", IconCss = "e-icons e-location", Url="/Settings/LocationMaster/DivisionMaster/ComponentScript/GridviewAndDelete/divisionmaster"},
+                            new MenuItem { Text = "District", IconCss = "e-icons e-location", Url="/Settings/LocationMaster/DistrictMaster/ComponentScript/GridviewAndDelete/districtmaster"},
+                            new MenuItem { Text = "Upazila", IconCss = "e-icons e-location", Url="/Settings/LocationMaster/UpazilaMaster/ComponentScript/GridviewAndDelete/upazilamaster"},
+                            new MenuItem { Text = "Union", IconCss = "e-icons e-location"},
+                            new MenuItem { Text = "Save", IconCss = "e-icons e-location", Url="/settings/locationmaster/savedivisionmaster"},
+                            new MenuItem { Text = "Save And Edit", IconCss = "e-icons e-location", Url="/settings/locationmaster/saveandeditdivisionmaster"}
+                        }
+                    },
+                   new MenuItem { Separator= true },
+                   new MenuItem
+                    {
+                        Text = "Vision Center",
+                        IconCss = "fa-solid fa-house-chimney-user",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Registration", IconCss = "e-icons e-button-field", Url="/Reports/Charts/ComponentChart"},
+                            new MenuItem { Text = "CPT Code", IconCss = "fa-solid fa-code"},
+                            new MenuItem { Text = "Referral Location", IconCss = "fa-solid fa-street-view"},
+                            new MenuItem { Text = "Referral Category", IconCss = "fa-solid fa-list"},
+                            new MenuItem { Text = "Operator", IconCss = "fa-solid fa-user"},
+                            new MenuItem { Text = "Doctor", IconCss = "fa-solid fa-user-doctor"},
+                            new MenuItem { Text = "Occupation", IconCss = "fa-solid fa-user-tie"},
+                            new MenuItem { Text = "Expenditure Khat", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Authority", IconCss = "fa-solid fa-circle-user"},
+                            new MenuItem { Text = "Outside Patient", IconCss = "e-icons e-button-field"},
+                            new MenuItem { Text = "Union", IconCss = "fa-solid fa-link"}
+                        }
+                    },
+
+                    new MenuItem
+                    {
+                        Text = "Control Master",
+                        IconCss = "fa-solid fa-database",
+                        Items = new List<MenuItem>()
+                        {
+                            new MenuItem { Text = "Running Number", IconCss = "fa-solid fa-sliders"},
+                            new MenuItem { Text = "Vision Center", IconCss = "fa-solid fa-house-chimney-user"}
+                        }
+                    }
+                }
+            },
+            new MenuItem
+            {
+                Text = "Outreach",
+                IconCss = "e-icons e-objects",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem { Text= "RREC", IconCss = "fa-solid fa-mountain-sun"},
+                    new MenuItem { Text= "SSTP", IconCss = "fa-solid fa-graduation-cap"},
+                    new MenuItem { Text= "PTTP", IconCss = "fa-solid fa-person-chalkboard"},
+                    new MenuItem { Text= "VDTP", IconCss = "fa-solid fa-user-doctor"}
+                }
+            }
+     };
+#pragma warning restore
+}
+ *@
+

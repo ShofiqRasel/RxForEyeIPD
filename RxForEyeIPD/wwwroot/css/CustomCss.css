@@ -1,0 +1,81 @@
+﻿/* Section for Visual Acuity */
+.bg-highlight {
+    background-color: #f0f8ff !important;
+    transition: 0.3s;
+}
+
+.e-active-field input {
+    font-weight: bold;
+    color: #007bff !important;
+}
+
+.va-button-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.va-grid-btn {
+    height: 60px;
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+}
+
+.e-card {
+    border-top: 3px solid #007bff !important;
+}
+/* Section for Visual Acuity */
+
+
+/* section form navbar */
+
+
+
+/* Hover dropdown */
+.navbar .dropdown:hover > .dropdown-menu {
+    min-width: 220px;
+    display: block;
+}
+
+/* Submenu setup */
+.dropdown-submenu {
+    position: relative;
+}
+
+    /* Hide submenu by default */
+    .dropdown-submenu .dropdown-menu {
+        min-width: 220px;
+        top: 0;
+        left: 100%;
+        margin-top: -1px;
+        display: none;
+    }
+
+    /* Show submenu ONLY when hovering Product 1 */
+    .dropdown-submenu:hover > .dropdown-menu {
+        padding-left: 20px;
+        display: block;
+    }
+
+    /* Arrow for submenu */
+    .dropdown-submenu > .dropdown-toggle::after {
+        float: right;
+        margin-top: 6px;
+        transform: rotate(-90deg);
+    }
+/* section form navbar */
+
+
+/* Accordion style section */
+.e-accordion .e-acrdn-item.e-select {
+    text-align: left;
+}
+.e-accordion .e-acrdn-item .e-acrdn-header .e-toggle-icon .e-icons {
+    padding-left
+    color: #ff0000;
+}
+.e-accordion .e-acrdn-item .e-acrdn-header:hover {
+    border: 2px solid gray;
+}
+/* Accordion style section */

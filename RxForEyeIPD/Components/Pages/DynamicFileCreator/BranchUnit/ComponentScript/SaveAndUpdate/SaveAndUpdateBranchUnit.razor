@@ -1,0 +1,100 @@
+@page "/new/branchunit" 
+@page "/new/branchunit/{Id:int}" 
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit
+@rendermode InteractiveServer
+@inject IBranchUnit branchunit
+@inject IBaseHospital basehospital
+@inject NavigationManager Nav
+<PageTitle>BranchUnit</PageTitle>
+<h3>@(IsEditMode ? "Edit BranchUnit" : "Add BranchUnit")</h3>
+<EditForm Model="BranchUnitEntity" OnValidSubmit="HandleSubmit" FormName="BranchUnitForm">
+    <DataAnnotationsValidator />
+    @* <div class="mb-2">
+        <label>BaseHospitalId</label>
+        <SfDropDownList TValue="int" TItem="BaseHospitalEntity" Placeholder="Select BaseHospitalName" DataSource="@BaseHospitalNames">
+            <DropDownListFieldSettings Value="BaseHospitalId" Text="BaseHospitalName"></DropDownListFieldSettings>
+        </SfDropDownList>
+        <ValidationMessage For="@(() => BranchUnitEntity.BaseHospitalId)" />
+    </div> *@
+    <div class="mb-2">
+        <label>BranchUnitName</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitName" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitName)" />
+    </div>
+    <div class="mb-2">
+        <label>BranchUnitContact</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitContact" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitContact)" />
+    </div>
+    <div class="mb-2">
+        <label>BranchUnitEmail</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitEmail" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitEmail)" />
+    </div>
+    <div class="mb-2">
+        <label>BranchUnitAddress</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitAddress" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitAddress)" />
+    </div>
+    <div class="mb-2">
+        <label>BranchUnitDialogue</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitDialogue" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitDialogue)" />
+    </div>
+    @* <div class="mb-2"> 
+<label>BranchUnitLogo</label> 
+<InputText @bind-Value="BranchUnitEntity.BranchUnitLogo" class="form-control" /> 
+<ValidationMessage For="@(() => BranchUnitEntity.BranchUnitLogo)" /> 
+</div>  *@
+    <div class="mb-2">
+        <label>BranchUnitMessage</label>
+        <InputText @bind-Value="BranchUnitEntity.BranchUnitMessage" class="form-control" />
+        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitMessage)" />
+    </div>
+    <button class="btn btn-primary" type="submit">
+        @(IsEditMode ? "Update" : "Save")
+    </button>
+    <a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/BranchUnit/ComponentScript/GridviewAndDelete/BranchUnit">
+        Cancel
+    </a>
+</EditForm>
+@code {
+    [Parameter] public int? Id { get; set; }
+    private BranchUnitEntity BranchUnitEntity = new();
+    private List<BaseHospitalEntity> BaseHospitalNames = new(); // List of Foreign Key Columns
+    private bool IsEditMode = false;
+    protected override async Task OnInitializedAsync()
+    {
+        BaseHospitalNames = await basehospital.GetAllBaseHospital(); // add this line to OnInitilizeAsync
+        if (Id != null && Id > 0)
+        {
+            IsEditMode = true;
+            BranchUnitEntity = await branchunit.GetBranchUnitById(Id.Value);
+        }
+        else
+        {
+            BranchUnitEntity = new ();
+            //BranchUnitEntity.BaseHospitalId = 1;
+            //BranchUnitEntity.CreatedBy = 1; // set your user id
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        // if (IsEditMode)
+        // {
+        //     BranchUnitEntity.UpdatedBy = 1; // set current user ID
+        //     BranchUnitEntity.BranchUnitId = Id.Value;
+        //     await branchunit.UpdateBranchUnit(BranchUnitEntity);
+        //     Nav.NavigateTo($"/branchunit");
+        // }
+        // else
+        // {
+        int result;
+        BranchUnitEntity.BaseHospitalId = 1;
+        BranchUnitEntity.CreatedBy = 1;
+        result = await branchunit.CreateBranchUnit(BranchUnitEntity);
+        Nav.NavigateTo($"/branchunit");
+        //}
+    }
+}

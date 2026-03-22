@@ -6,18 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <ResourcePreloader />
-    <link rel="stylesheet" href="@Assets["bootstrap-5.3.8-dist/css/bootstrap.css"]" />
+    <link rel="stylesheet" href="@Assets["bootstrap/bootstrap.min.css"]" />
     <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["RxForEyeIPD.styles.css"]" />
+    <link rel="stylesheet" href="_content/Syncfusion.Blazor.Themes/fluent2.css" />
+    <link rel="stylesheet" href="syncfusion-blazor-icons.css" />
+    <link rel="stylesheet" href="@Assets["css/CustomCss.css"]" />
+    <link rel="stylesheet" href="@Assets["css/all.min.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="@Assets["bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"]"></script>
+    <script src="_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js"></script>
     <script src="@Assets["CustomJs/CustomJs.js"]"></script>
 </body>
 

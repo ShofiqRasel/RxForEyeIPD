@@ -1,0 +1,78 @@
+@page "/Settings/LocationMaster/User/ComponentScript/SaveAndUpdate/SaveAndUpdateUser/user" 
+@page "/Settings/LocationMaster/User/ComponentScript/SaveAndUpdate/SaveAndUpdateUser/user/{Id:int}" 
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.User.srvUser
+@rendermode InteractiveServer
+@inject IUser user
+@inject IBranchUnit branchunit
+@inject NavigationManager Nav
+<PageTitle>User</PageTitle>
+<h3>User</h3>
+<h3>@(IsEditMode ? "Edit User" : "Add User")</h3>
+<EditForm Model="UserEntity" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label>BranchId</label>
+        <SfDropDownList TValue="int" TItem="BranchUnitEntity" Placeholder="Select BranchUnitName" DataSource="@BranchUnitNames">
+            <DropDownListFieldSettings Value="BranchUnitId" Text="BranchUnitName"></DropDownListFieldSettings>
+        </SfDropDownList>
+        <ValidationMessage For="@(() => UserEntity.BranchId)" />
+    </div>
+    <div class="mb-2">
+        <label>UserName</label>
+        <InputText @bind-Value="UserEntity.UserName" class="form-control" />
+        <ValidationMessage For="@(() => UserEntity.UserName)" />
+    </div>
+    <div class="mb-2">
+        <label>UserEmail</label>
+        <InputText @bind-Value="UserEntity.UserEmail" class="form-control" />
+        <ValidationMessage For="@(() => UserEntity.UserEmail)" />
+    </div>
+    @* <div class="mb-2">
+        <label>UserImage</label>
+        <InputText @bind-Value="UserEntity.UserImage" class="form-control" />
+        <ValidationMessage For="@(() => UserEntity.UserImage)" />
+    </div> *@
+    <button class="btn btn-primary" type="submit">
+        @(IsEditMode ? "Update" : "Save")
+    </button>
+    <a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/User/ComponentScript/GridviewAndDelete/User">
+        Cancel
+    </a>
+</EditForm>
+@code {
+    [Parameter] public int? Id { get; set; }
+    private UserEntity UserEntity = new();
+    private List<BranchUnitEntity> BranchUnitNames = new(); // List of Foreign Key Columns
+    private bool IsEditMode = false;
+    protected override async Task OnInitializedAsync()
+    {
+        BranchUnitNames = await branchunit.GetAllBranchUnit(); // add this line to OnInitilizeAsync
+        if (Id != null && Id > 0)
+        {
+            IsEditMode = true;
+            UserEntity = await user.GetUserById(Id.Value);
+        }
+        else
+        {
+            UserEntity = new UserEntity();
+            UserEntity.CreatedBy = 1; // set your user id
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        if (IsEditMode)
+        {
+            UserEntity.UpdatedBy = 1; // set current user ID
+            UserEntity.UserId = Id.Value;
+            await user.UpdateUser(UserEntity);
+            Nav.NavigateTo($"/Settings/LocationMaster/User/ComponentScript/GridviewAndDelete/User");
+        }
+        else
+        {
+            UserEntity.CreatedBy = 1;
+            await user.CreateUser(UserEntity);
+            Nav.NavigateTo($"/Settings/LocationMaster/User/ComponentScript/GridviewAndDelete/User");
+        }
+    }
+}

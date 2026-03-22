@@ -1,0 +1,59 @@
+@page "/branchunit" 
+@using Syncfusion.Blazor.Grids
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit
+@rendermode InteractiveServer
+@inject IBranchUnit BranchUnitService
+@inject NavigationManager Nav
+<PageTitle>List of BranchUnit</PageTitle>
+<h3>List of BranchUnit</h3>
+<div class="row pb-2">
+    <div class="col-12 text-end">
+        @* Set your href manually according to your need. *@ 
+<a class="btn btn-sm btn-primary" href="/new/branchunit">
+            New Entry
+        </a>
+    </div>
+</div>
+<div class="row pb-2">
+    <div class="col-md-12">
+        <SfGrid DataSource="@BranchUnits" AllowPaging="true">
+            <GridPageSettings PageSize="5"></GridPageSettings>
+            <GridColumns>
+                <GridColumn Field="BranchUnitId" HeaderText="BranchUnitId" Width="100"></GridColumn>
+                <GridColumn Field="BaseHospitalId" HeaderText="BaseHospitalId" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitName" HeaderText="BranchUnitName" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitContact" HeaderText="BranchUnitContact" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitEmail" HeaderText="BranchUnitEmail" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitAddress" HeaderText="BranchUnitAddress" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitDialogue" HeaderText="BranchUnitDialogue" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitMessage" HeaderText="BranchUnitMessage" Width="100"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </div>
+</div>
+@code {
+    public List<BranchUnitEntity> BranchUnits = new();
+    private BranchUnitEntity BranchUnitEntity = new();
+    protected override async Task OnInitializedAsync()
+    {
+        BranchUnits = await BranchUnitService.GetAllBranchUnit();
+    }
+    void EditBranchUnit(int id)
+    {
+        Nav.NavigateTo($"/branchunit/{id}");
+    }
+    private async Task DeleteBranchUnit(int id)
+    {
+        BranchUnitEntity.BranchUnitId = id;
+        BranchUnitEntity.DeletedBy = 1;
+        var result = await BranchUnitService.DeleteBranchUnit(BranchUnitEntity);
+        if (result > 0)
+        {
+            BranchUnits = await BranchUnitService.GetAllBranchUnit();// Optionally show a success message
+        }
+        else
+        {
+            // Optionally show an error message
+        }
+    }
+}

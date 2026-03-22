@@ -1,0 +1,194 @@
+@page "/basehospital" 
+@page "/basehospital/{Id:int}" 
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Layouts
+@inject IBaseHospital basehospital
+@inject NavigationManager Nav
+<PageTitle>BaseHospital</PageTitle>
+
+<EditForm Model="baseHospitalEntity" OnValidSubmit="HandleSubmit" FormName="BaseHospitalForm">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5 class="text-primary mb-3">@(IsEditMode ? "Edit BaseHospital" : "Add BaseHospital")</h5>
+                    <DataAnnotationsValidator />
+                    <div class="mb-2">
+                        <label>Hospital Name</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalName" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalName)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Hospital Contact</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalContact" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalContact)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Email Id</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalEmail" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalEmail)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Address</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalAddress" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalAddress)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Dialogue</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalDialogue" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalDialogue)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Message</label>
+                        <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalMessage" Autocomplete="AutoComplete.Off" class="form-control" />
+                        <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalMessage)" />
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm d-flex flex-column">
+                    <div class="e-card shadow-sm p-3 h-100">
+                        <div class="e-card-header">
+                            <div class="e-card-header-caption">
+                                <span class="e-card-header-title text-primary">User Image</span>
+                            </div>
+                        </div>
+                        <div class="e-card-content text-center">
+                            <div class="image-preview-container mb-3">
+                                <div class="text-center">
+                                    <img src="@baseHospitalEntity.ImagePreviewUrl" class="rounded-circle border" style="width:200px;height:200px;object-fit:cover;" />
+                                </div>
+
+                                <SfUploader AutoUpload="true" AllowMultiple="false" AllowedExtensions=".jpg,.png,.jpeg">
+                                    <UploaderEvents ValueChange="OnImageUpload"></UploaderEvents>
+                                </SfUploader>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-success">@SuccessMessage</span>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">
+                            @(IsEditMode ? "Update" : "Save")
+                        </button>
+
+                        <a class="btn btn-secondary ms-2" href="/basehospital">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private BaseHospitalEntity baseHospitalEntity = new();
+    private bool IsEditMode = false;
+    private string SuccessMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != null && Id > 0)
+        {
+            IsEditMode = true;
+            baseHospitalEntity = await basehospital.GetBaseHospitalById(Id.Value);
+            if (baseHospitalEntity.BaseHospitalLogo != null && baseHospitalEntity.BaseHospitalLogo.Length > 0)
+            {
+                baseHospitalEntity.ImagePreviewUrl = $"data:image/png;base64,{Convert.ToBase64String(baseHospitalEntity.BaseHospitalLogo)}";
+            }
+        }
+        else
+        {
+            baseHospitalEntity = new BaseHospitalEntity();
+            baseHospitalEntity.CreatedBy = 1; // set your user id
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        if (IsEditMode)
+        {
+            baseHospitalEntity.UpdatedBy = 1; // set current user ID
+            baseHospitalEntity.BaseHospitalId = Id.Value;
+            await basehospital.UpdateBaseHospital(baseHospitalEntity);
+            Nav.NavigateTo($"/basehospitallist");
+        }
+        else
+        {
+            baseHospitalEntity.CreatedBy = 1;
+            var rowsAffected = await basehospital.CreateBaseHospital(baseHospitalEntity);
+            if (rowsAffected > 0)
+            {
+                Console.WriteLine("Save Successful");
+                SuccessMessage = baseHospitalEntity.BaseHospitalName + " created successfully!";
+                ResetForm();
+            }
+            else
+            {
+                Console.WriteLine("Save failed: Likely a duplicate Hospital Name in DB.");
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnImageUpload(UploadChangeEventArgs args)
+    {
+        var file = args.Files.FirstOrDefault();
+
+        if (file != null)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream();
+
+                if (file?.File is Microsoft.AspNetCore.Http.IFormFile formFile)
+                {
+                    await formFile.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Microsoft.AspNetCore.Components.Forms.IBrowserFile browserFile)
+                {
+                    using var fs = browserFile.OpenReadStream();
+                    await fs.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Stream directStream)
+                {
+                    await directStream.CopyToAsync(memoryStream);
+                }
+
+                var bytes = memoryStream.ToArray();
+
+                // Replace previous image
+                baseHospitalEntity.BaseHospitalLogo = bytes;
+
+                string base64 = Convert.ToBase64String(bytes);
+                var mimeType = file?.FileInfo?.Type ?? "image/png";
+                baseHospitalEntity.ImagePreviewUrl = $"data:{mimeType};base64,{base64}";
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            baseHospitalEntity.BaseHospitalLogo = null;
+        }
+    }
+
+    private void ResetForm()
+    {
+        IsEditMode = false;
+        baseHospitalEntity = new();
+        baseHospitalEntity.ImagePreviewUrl = "Images/MiscImage/default-avatar.png";
+        StateHasChanged();
+    }
+
+}

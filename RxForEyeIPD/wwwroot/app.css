@@ -8,36 +8,11 @@
 
 .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    display: inline-flex; /* Changed to inline-flex for better alignment */
-    align-items: center;
-    justify-content: center;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: end;
+    justify-content: end;
     vertical-align: middle;
-}
-
-/* =========================================
-   2. GLOBAL DEFAULTS
-   ========================================= */
-/*html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}*/
-
-/* Disable the sidebar flex layout */
-.page {
-    display: block !important;
-}
-
-/* Make sure the main content area takes up the full width */
-main {
-    width: 100%;
-}
-
-/* Adjust padding for the top navbar so content doesn't hide behind it */
-.content {
-    padding: 2rem !important;
 }
 
 html, body {
@@ -100,60 +75,3 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
-
-
-/* 1. Force the layout to stack vertically instead of side-by-side */
-.page {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 2. Completely hide the default Blazor top-row and sidebar containers */
-.sidebar, .top-row {
-    display: none !important;
-}
-
-/* 3. Fix the Navbar Brand and ensure it doesn't have the grey background */
-.navbar-brand {
-    font-size: 1.5rem;
-    padding: 0;
-    margin-right: 2rem;
-}
-
-/* 4. Fix the search bar sizing and alignment */
-.navbar .form-control {
-    max-width: 300px;
-}
-
-/* 5. Ensure the body content starts below the navbar and fills the screen */
-main {
-    flex: 1;
-    width: 100%;
-}
-
-.content {
-    padding: 2rem !important;
-}
-.navbar-nav {
-    align-items: center;
-}
-
-.navbar .nav-link {
-    display: flex;
-    align-items: center;
-}
-
-/* Fix dropdown vertical shift */
-.dropdown-menu {
-    margin-top: 0;
-}
-
-/* Prevent weird spacing from Blazor */
-.nav-item {
-    display: flex;
-    align-items: center;
-}
-.material-symbols-outlined {
-    vertical-align: middle;
-}
-

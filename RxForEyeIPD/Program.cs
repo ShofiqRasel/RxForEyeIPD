@@ -1,10 +1,11 @@
 using RxForEyeIPD.Components;
+using RxForEyeOPD.Extensions;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register Syncfusion license (you can use community/free trial license)
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1JFaF5cX2BCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWH9fcXRdQ2VeVU11WUJWYEg=");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1JHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWXxccnRQRGhcVkFwVkFWYEo=");
 
 
 // Add services to the container.
@@ -14,7 +15,7 @@ builder.Services.AddSyncfusionBlazor();
 
 
 /// Add service collections for interfaces and application services (Extensions Folder Files)
-//builder.Services.AddInterfaceApplicationServices();
+builder.Services.AddInterfaceApplicationServices();
 //builder.Services.AddApplicationServices();
 //builder.Services.AddIhmsServices();
 

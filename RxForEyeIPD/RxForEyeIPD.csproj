@@ -11,8 +11,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
-    <Folder Include="Files\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
