@@ -1,0 +1,70 @@
+@page "/userrolelist" 
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole.srvUserRole
+@rendermode InteractiveServer
+@inject IUserRole UserRoleService
+@inject NavigationManager Nav
+<PageTitle>List of UserRole</PageTitle>
+<h6>List of UserRole</h6>
+<div class="row pb-2">
+    <div class="col-12 text-end">
+        @* Set your href manually according to your need. *@ 
+    <a class="btn btn-sm btn-primary" href="/userrole">
+            New Entry
+        </a>
+    </div>
+</div>
+<div class="row pb-2">
+    <div class="col-md-12">
+        <SfGrid DataSource="@UserRoles" AllowPaging="true">
+            <GridPageSettings PageSize="5"></GridPageSettings>
+            <GridColumns>
+                <GridColumn Field="UserRoleId" HeaderText="UserRoleId" Width="100"></GridColumn>
+                <GridColumn Field="UserRoleName" HeaderText="UserRoleName" Width="100"></GridColumn>
+                <GridColumn HeaderText="Actions" Width="100">
+                    <Template>
+                        @{
+                            var row = context as UserRoleEntity;
+                        }
+                        @if (row != null)
+                        {
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditUserRole(row.UserRoleId)">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteUserRole(row.UserRoleId)">
+                                Delete
+                            </button>
+                        </div>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </div>
+</div>
+@code {
+    public List<UserRoleEntity> UserRoles = new();
+    private UserRoleEntity UserRoleEntity = new();
+    protected override async Task OnInitializedAsync()
+    {
+        UserRoles = await UserRoleService.GetAllUserRole();
+    }
+    void EditUserRole(int id)
+    {
+        Nav.NavigateTo($"/userrole/{id}");
+    }
+    private async Task DeleteUserRole(int id)
+    {
+        UserRoleEntity.UserRoleId = id;
+        UserRoleEntity.DeletedBy = 1;
+        var result = await UserRoleService.DeleteUserRole(UserRoleEntity);
+        if (result > 0)
+        {
+            UserRoles = await UserRoleService.GetAllUserRole();// Optionally show a success message
+        }
+        else
+        {
+            // Optionally show an error message
+        }
+    }
+}

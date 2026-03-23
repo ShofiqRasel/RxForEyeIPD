@@ -10,7 +10,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole /*Change
         {
             public int UserRoleId { get; set; }
             [Required(ErrorMessage = "User rolename is required.")]
-            [StringLength(20, MinimumLength = 2, ErrorMessage = "VA LE must be at least 2 characters.")]
+            [StringLength(20, MinimumLength = 2, ErrorMessage = "Userrole must be at least 2 characters.")]
             public string? UserRoleName { get; set; }
             public int CreatedBy { get; set; }
             public int UpdatedBy { get; set; }
