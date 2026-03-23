@@ -12,6 +12,7 @@ namespace RxForEyeOPD.Extensions
             services.AddScoped<IBaseHospital, BaseHospitalRepository>();
             services.AddScoped<IBranchUnit, BranchUnitRepository>();
             services.AddScoped<IUser, UserRepository>();
+            services.AddScoped<IBranchUnit, BranchUnitRepository>();
             return services;
         }
     }

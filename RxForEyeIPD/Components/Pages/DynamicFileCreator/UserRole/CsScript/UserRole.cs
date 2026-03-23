@@ -87,7 +87,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole /*Change
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.Add("@UserRoleName", SqlDbType.VarChar).Value = PassUserRole.UserRoleName ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@UserRoleName", SqlDbType.VarChar).Value = PassUserRole.UserRoleName;
                 cmd.Parameters.AddWithValue("@CreatedBy", PassUserRole.CreatedBy);
                 await con.OpenAsync();
                 return await cmd.ExecuteNonQueryAsync();
@@ -99,8 +99,8 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole /*Change
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@UserRoleId", PassUserRole.UserRoleId);
-                cmd.Parameters.AddWithValue("@UserRoleName", PassUserRole.UserRoleName);
+                cmd.Parameters.Add("@UserRoleId", SqlDbType.Int).Value = PassUserRole.UserRoleId;
+                cmd.Parameters.Add("@UserRoleName", SqlDbType.VarChar).Value = PassUserRole.UserRoleName ?? (object)DBNull.Value;
                 cmd.Parameters.AddWithValue("@UpdatedBy", PassUserRole.UpdatedBy);
                 await con.OpenAsync();
                 return await cmd.ExecuteNonQueryAsync();
@@ -112,7 +112,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole /*Change
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@UserRoleId", PassUserRole.UserRoleId);
+                cmd.Parameters.Add("@UserRoleId", SqlDbType.Int).Value = PassUserRole.UserRoleId;
                 cmd.Parameters.AddWithValue("@DeletedBy", PassUserRole.DeletedBy); // Pass logged-in user id later 
                 await con.OpenAsync();
                 return await cmd.ExecuteNonQueryAsync();

@@ -1,5 +1,4 @@
-@page "/branchunit" 
-@using Syncfusion.Blazor.Grids
+@page "/branchunitlist" 
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit
 @rendermode InteractiveServer
 @inject IBranchUnit BranchUnitService
@@ -9,7 +8,7 @@
 <div class="row pb-2">
     <div class="col-12 text-end">
         @* Set your href manually according to your need. *@ 
-<a class="btn btn-sm btn-primary" href="/new/branchunit">
+<a class="btn btn-sm btn-primary" href="/branchunit">
             New Entry
         </a>
     </div>
@@ -19,14 +18,51 @@
         <SfGrid DataSource="@BranchUnits" AllowPaging="true">
             <GridPageSettings PageSize="5"></GridPageSettings>
             <GridColumns>
-                <GridColumn Field="BranchUnitId" HeaderText="BranchUnitId" Width="100"></GridColumn>
-                <GridColumn Field="BaseHospitalId" HeaderText="BaseHospitalId" Width="100"></GridColumn>
-                <GridColumn Field="BranchUnitName" HeaderText="BranchUnitName" Width="100"></GridColumn>
-                <GridColumn Field="BranchUnitContact" HeaderText="BranchUnitContact" Width="100"></GridColumn>
-                <GridColumn Field="BranchUnitEmail" HeaderText="BranchUnitEmail" Width="100"></GridColumn>
-                <GridColumn Field="BranchUnitAddress" HeaderText="BranchUnitAddress" Width="100"></GridColumn>
-                <GridColumn Field="BranchUnitDialogue" HeaderText="BranchUnitDialogue" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitId" HeaderText="Unit Id" Width="100"></GridColumn>
+                <GridColumn Field="BaseHospitalId" HeaderText="Hospital Id" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitName" HeaderText="Unit Name" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitContact" HeaderText="Unit Contact" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitEmail" HeaderText="Unit Email" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitAddress" HeaderText="Unit Address" Width="100"></GridColumn>
+                <GridColumn Field="BranchUnitDialogue" HeaderText="Unit Dialogue" Width="100"></GridColumn>
+                <GridColumn HeaderText="Branch Logo" Width="100" TextAlign="TextAlign.Center">
+                    <Template>
+                        @{
+                            // বর্তমান রো-এর ডেটা এক্সেস করা
+                            var logo = (context as BranchUnitEntity);
+                            if (logo != null && logo.BranchUnitLogo != null)
+                            {
+                                <img src="@ConvertToImage(logo.BranchUnitLogo)" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                // ডাটা না থাকলে একটি আইকন বা টেক্সট দেখান
+                                <div class="no-image">
+                                    <img src="Images/MiscImage/default-avatar.png" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                                </div>
+                            }
+                        }
+                    </Template>
+                </GridColumn>
                 <GridColumn Field="BranchUnitMessage" HeaderText="BranchUnitMessage" Width="100"></GridColumn>
+                <GridColumn HeaderText="Actions" Width="100">
+                    <Template>
+                        @{
+                            var row = context as BranchUnitEntity;
+                        }
+                        @if (row != null)
+                        {
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary" @onclick="() => EditBranchUnit(row.BranchUnitId)">
+                                    Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteBranchUnit(row.BranchUnitId)">
+                                    Delete
+                                </button>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
             </GridColumns>
         </SfGrid>
     </div>
@@ -55,5 +91,16 @@
         {
             // Optionally show an error message
         }
+    }
+
+    public string ConvertToImage(byte[] imageBytes)
+    {
+        if (imageBytes != null && imageBytes.Length > 0)
+        {
+            // byte[] কে base64 string এ রূপান্তর করা হচ্ছে
+            string base64 = Convert.ToBase64String(imageBytes);
+            return $"data:image/png;base64,{base64}";
+        }
+        return "Images/MiscImage/default-avatar.png"; // ছবি না থাকলে ডিফল্ট ছবি
     }
 }

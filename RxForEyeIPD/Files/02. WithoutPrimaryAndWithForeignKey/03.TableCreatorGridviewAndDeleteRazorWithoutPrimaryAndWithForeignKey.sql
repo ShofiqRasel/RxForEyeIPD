@@ -8,7 +8,7 @@ declare @TableCreatorString varchar(4000) = '',  @TableName varchar (100), @Enti
 if object_id ('TableCreatorFirst') is not null
 drop table TableCreatorFirst
 
-select * into TableCreatorFirst from OPENROWSET('Microsoft.ACE.OLEDB.12.0',  'Excel 8.0;HDR=YES;Database=E:\DotNetCoreProjects\RxForEyeIPD\RxForEyeIPD\Files\02. WithoutPrimaryAndWithForeignKey\TableCreateWithoutPrimaryAndWithForeignKey.xlsx', 'select * from [TblUser$]') 
+select * into TableCreatorFirst from OPENROWSET('Microsoft.ACE.OLEDB.12.0',  'Excel 8.0;HDR=YES;Database=E:\DotNetCoreProjects\RxForEyeIPD\RxForEyeIPD\Files\02. WithoutPrimaryAndWithForeignKey\TableCreateWithoutPrimaryAndWithForeignKey.xlsx', 'select * from [TblBranchUnit$]') 
 
 
 if object_id ('TableCreator') is not null

@@ -11,14 +11,16 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
             public int BranchUnitId { get; set; }
             public int BaseHospitalId { get; set; }
 
-            [Required(ErrorMessage = "A BranchUnit name is required.")]
+            [Required(ErrorMessage = "A Branch Unit name is required.")]
             [StringLength(100, MinimumLength = 6, ErrorMessage = "Branch Name must be at least 6 characters.")]
             public string? BranchUnitName { get; set; }
             public string? BranchUnitContact { get; set; }
             public string? BranchUnitEmail { get; set; }
             public string? BranchUnitAddress { get; set; }
             public string? BranchUnitDialogue { get; set; }
-            //public byte[] BranchUnitLogo { get; set; }
+            public byte[]? BranchUnitLogo { get; set; }
+            public string ImagePreviewUrl { get; set; } = "Images/MiscImage/default-avatar.png";
+
             public string? BranchUnitMessage { get; set; }
             public int CreatedBy { get; set; }
             public int UpdatedBy { get; set; }
@@ -32,7 +34,6 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
         {
             Task<List<BranchUnitEntity>> GetAllBranchUnit();
             Task<BranchUnitEntity> GetBranchUnitById(int PassBranchUnitId);
-            Task<List<BranchUnitEntity>> GetBranchUnitByBaseHospitalId(int BaseHospitalId);
             Task<int> CreateBranchUnit(BranchUnitEntity PassBranchUnit);
             Task<int> UpdateBranchUnit(BranchUnitEntity PassBranchUnit);
             Task<int> DeleteBranchUnit(BranchUnitEntity PassBranchUnit);
@@ -67,7 +68,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                                 BranchUnitEmail = dr["BranchUnitEmail"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitEmail"]),
                                 BranchUnitAddress = Convert.ToString(dr["BranchUnitAddress"]),
                                 BranchUnitDialogue = dr["BranchUnitDialogue"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitDialogue"]),
-                                //BranchUnitLogo = dr["BranchUnitLogo"] == DBNull.Value ?  : (dr["BranchUnitLogo"]), 
+                                BranchUnitLogo = dr["BranchUnitLogo"] == DBNull.Value ? null : (byte[])dr["BranchUnitLogo"],
                                 BranchUnitMessage = dr["BranchUnitMessage"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitMessage"]),
                                 CreatedBy = Convert.ToInt32(dr["CreatedBy"]),
                                 UpdatedBy = dr["UpdatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(dr["UpdatedBy"]),
@@ -89,7 +90,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@BranchUnitId", PassBranchUnitId);
+                cmd.Parameters.Add("@BranchUnitId", SqlDbType.Int).Value = PassBranchUnitId;
                 await con.OpenAsync();
                 using var dr = await cmd.ExecuteReaderAsync();
                 if (await dr.ReadAsync())
@@ -103,18 +104,17 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@BaseHospitalId", PassBranchUnit.BaseHospitalId);
-                cmd.Parameters.AddWithValue("@BranchUnitName", PassBranchUnit.BranchUnitName);
-                cmd.Parameters.AddWithValue("@BranchUnitContact", PassBranchUnit.BranchUnitContact);
-                cmd.Parameters.AddWithValue("@BranchUnitEmail", PassBranchUnit.BranchUnitEmail);
-                cmd.Parameters.AddWithValue("@BranchUnitAddress", PassBranchUnit.BranchUnitAddress);
-                cmd.Parameters.AddWithValue("@BranchUnitDialogue", PassBranchUnit.BranchUnitDialogue);
-                //cmd.Parameters.AddWithValue("@BranchUnitLogo", PassBranchUnit.BranchUnitLogo);
-                cmd.Parameters.AddWithValue("@BranchUnitMessage", PassBranchUnit.BranchUnitMessage);
+                cmd.Parameters.Add("@BaseHospitalId", SqlDbType.Int).Value = PassBranchUnit.BaseHospitalId;
+                cmd.Parameters.Add("@BranchUnitName", SqlDbType.NVarChar).Value = PassBranchUnit.BranchUnitName;
+                cmd.Parameters.Add("@BranchUnitContact", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitContact;
+                cmd.Parameters.Add("@BranchUnitEmail", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitEmail;
+                cmd.Parameters.Add("@BranchUnitAddress", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitAddress;
+                cmd.Parameters.Add("@BranchUnitDialogue", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitDialogue;
+                cmd.Parameters.Add("@BranchUnitLogo", SqlDbType.VarBinary).Value = PassBranchUnit.BranchUnitLogo;
+                cmd.Parameters.Add("@BranchUnitMessage", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitMessage;
                 cmd.Parameters.AddWithValue("@CreatedBy", PassBranchUnit.CreatedBy);
                 await con.OpenAsync();
-                int rowsAffected = await cmd.ExecuteNonQueryAsync();
-                return rowsAffected;
+                return await cmd.ExecuteNonQueryAsync();
             }
             public async Task<int> UpdateBranchUnit(BranchUnitEntity PassBranchUnit)
             {
@@ -123,15 +123,15 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@BranchUnitId", PassBranchUnit.BranchUnitId);
-                cmd.Parameters.AddWithValue("@BaseHospitalId", PassBranchUnit.BaseHospitalId);
-                cmd.Parameters.AddWithValue("@BranchUnitName", PassBranchUnit.BranchUnitName);
-                cmd.Parameters.AddWithValue("@BranchUnitContact", PassBranchUnit.BranchUnitContact);
-                cmd.Parameters.AddWithValue("@BranchUnitEmail", PassBranchUnit.BranchUnitEmail);
-                cmd.Parameters.AddWithValue("@BranchUnitAddress", PassBranchUnit.BranchUnitAddress);
-                cmd.Parameters.AddWithValue("@BranchUnitDialogue", PassBranchUnit.BranchUnitDialogue);
-                //cmd.Parameters.AddWithValue("@BranchUnitLogo", PassBranchUnit.BranchUnitLogo);
-                cmd.Parameters.AddWithValue("@BranchUnitMessage", PassBranchUnit.BranchUnitMessage);
+                cmd.Parameters.Add("@BranchUnitId", SqlDbType.Int).Value = PassBranchUnit.BranchUnitId;
+                cmd.Parameters.Add("@BaseHospitalId", SqlDbType.Int).Value = PassBranchUnit.BaseHospitalId;
+                cmd.Parameters.Add("@BranchUnitName", SqlDbType.NVarChar).Value = PassBranchUnit.BranchUnitName ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitContact", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitContact ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitEmail", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitEmail ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitAddress", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitAddress ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitDialogue", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitDialogue ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitLogo", SqlDbType.VarBinary).Value = PassBranchUnit.BranchUnitLogo ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@BranchUnitMessage", SqlDbType.VarChar).Value = PassBranchUnit.BranchUnitMessage ?? (object)DBNull.Value;
                 cmd.Parameters.AddWithValue("@UpdatedBy", PassBranchUnit.UpdatedBy);
                 await con.OpenAsync();
                 return await cmd.ExecuteNonQueryAsync();
@@ -143,7 +143,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@BranchUnitId", PassBranchUnit.BranchUnitId);
+                cmd.Parameters.Add("@BranchUnitId", SqlDbType.Int).Value = PassBranchUnit.BranchUnitId;
                 cmd.Parameters.AddWithValue("@DeletedBy", PassBranchUnit.DeletedBy); // Pass logged-in user id later 
                 await con.OpenAsync();
                 return await cmd.ExecuteNonQueryAsync();
@@ -158,45 +158,9 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit /*Chan
                     BranchUnitEmail = dr["BranchUnitEmail"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitEmail"]),
                     BranchUnitAddress = Convert.ToString(dr["BranchUnitAddress"]),
                     BranchUnitDialogue = dr["BranchUnitDialogue"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitDialogue"]),
-                    //BranchUnitLogo = dr["BranchUnitLogo"] == DBNull.Value ?  : (dr["BranchUnitLogo"]), 
+                    BranchUnitLogo = dr["BranchUnitLogo"] == DBNull.Value ? null : (byte[])dr["BranchUnitLogo"],
                     BranchUnitMessage = dr["BranchUnitMessage"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitMessage"]),
                 };
-            }
-            public async Task<List<BranchUnitEntity>> GetBranchUnitByBaseHospitalId(int BaseHospitalId)
-            {
-                List<BranchUnitEntity> BranchUnitlist = new List<BranchUnitEntity>();
-                using SqlConnection con = new SqlConnection(_ConStrRxForEyeIPD);
-                using (SqlCommand cmd = new SqlCommand("ProcSelectBranchUnitsByBaseHospitalId", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@BaseHospitalId", BaseHospitalId);
-                    await con.OpenAsync();
-                    using (SqlDataReader dr = await cmd.ExecuteReaderAsync())
-                        while (await dr.ReadAsync())
-                        {
-                            BranchUnitlist.Add(new BranchUnitEntity
-                            {
-                                BranchUnitId = dr["BranchUnitId"] == DBNull.Value ? 0 : Convert.ToInt32(dr["BranchUnitId"]),
-                                BaseHospitalId = Convert.ToInt32(dr["BaseHospitalId"]),
-                                BranchUnitName = Convert.ToString(dr["BranchUnitName"]),
-                                BranchUnitContact = dr["BranchUnitContact"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitContact"]),
-                                BranchUnitEmail = dr["BranchUnitEmail"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitEmail"]),
-                                BranchUnitAddress = Convert.ToString(dr["BranchUnitAddress"]),
-                                BranchUnitDialogue = dr["BranchUnitDialogue"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitDialogue"]),
-                                //BranchUnitLogo = dr["BranchUnitLogo"] == DBNull.Value ?  : (dr["BranchUnitLogo"]), 
-                                BranchUnitMessage = dr["BranchUnitMessage"] == DBNull.Value ? null : Convert.ToString(dr["BranchUnitMessage"]),
-                                CreatedBy = Convert.ToInt32(dr["CreatedBy"]),
-                                UpdatedBy = dr["UpdatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(dr["UpdatedBy"]),
-                                DeletedBy = dr["DeletedBy"] == DBNull.Value ? 0 : Convert.ToInt32(dr["DeletedBy"]),
-                                CreatedAt = Convert.ToDateTime(dr["CreatedAt"]),
-                                UpdatedAt = dr["UpdatedAt"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(dr["UpdatedAt"]),
-                                DeletedAt = dr["DeletedAt"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(dr["DeletedAt"]),
-                                IsActive = dr["IsActive"].ToString()
-                            }
-                            );
-                        }
-                    return BranchUnitlist;
-                }
             }
         }
     }

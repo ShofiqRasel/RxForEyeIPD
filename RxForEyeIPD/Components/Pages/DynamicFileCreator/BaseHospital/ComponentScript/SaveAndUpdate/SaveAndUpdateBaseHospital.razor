@@ -45,7 +45,6 @@
                         <SfTextBox @bind-Value="baseHospitalEntity.BaseHospitalMessage" Autocomplete="AutoComplete.Off" class="form-control" />
                         <ValidationMessage For="@(() => baseHospitalEntity.BaseHospitalMessage)" />
                     </div>
-
                 </div>
             </div>
 
@@ -114,10 +113,13 @@
     {
         if (IsEditMode)
         {
-            baseHospitalEntity.UpdatedBy = 1; // set current user ID
-            baseHospitalEntity.BaseHospitalId = Id.Value;
-            await basehospital.UpdateBaseHospital(baseHospitalEntity);
-            Nav.NavigateTo($"/basehospitallist");
+            if (Id != null && Id > 0)
+            {
+                baseHospitalEntity.UpdatedBy = 1; // set current user ID
+                baseHospitalEntity.BaseHospitalId = Id.Value;
+                await basehospital.UpdateBaseHospital(baseHospitalEntity);
+                Nav.NavigateTo($"/basehospitallist");
+            }
         }
         else
         {

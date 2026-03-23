@@ -1,67 +1,96 @@
-@page "/new/branchunit" 
-@page "/new/branchunit/{Id:int}" 
+@page "/branchunit" 
+@page "/branchunit/{Id:int}" 
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript
+@using Syncfusion.Blazor.Buttons.Internal
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit
-@rendermode InteractiveServer
 @inject IBranchUnit branchunit
 @inject IBaseHospital basehospital
 @inject NavigationManager Nav
 <PageTitle>BranchUnit</PageTitle>
-<h3>@(IsEditMode ? "Edit BranchUnit" : "Add BranchUnit")</h3>
-<EditForm Model="BranchUnitEntity" OnValidSubmit="HandleSubmit" FormName="BranchUnitForm">
-    <DataAnnotationsValidator />
-    @* <div class="mb-2">
-        <label>BaseHospitalId</label>
-        <SfDropDownList TValue="int" TItem="BaseHospitalEntity" Placeholder="Select BaseHospitalName" DataSource="@BaseHospitalNames">
-            <DropDownListFieldSettings Value="BaseHospitalId" Text="BaseHospitalName"></DropDownListFieldSettings>
-        </SfDropDownList>
-        <ValidationMessage For="@(() => BranchUnitEntity.BaseHospitalId)" />
-    </div> *@
-    <div class="mb-2">
-        <label>BranchUnitName</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitName" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitName)" />
+<h6>@(IsEditMode ? "Edit BranchUnit" : "Add BranchUnit")</h6>
+<EditForm Model="branchUnitEntity" OnValidSubmit="HandleSubmit" FormName="frmBranchUnit">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm">
+                    <DataAnnotationsValidator />
+                    <div class="mb-2">
+                        <label>BaseHospitalId</label>
+                        <SfDropDownList TValue="int" TItem="BaseHospitalEntity" Placeholder="Select BaseHospitalName" DataSource="@BaseHospitalNames" @bind-Value="@branchUnitEntity.BaseHospitalId">
+                            <DropDownListFieldSettings Value="BaseHospitalId" Text="BaseHospitalName"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                        <ValidationMessage For="@(() => branchUnitEntity.BaseHospitalId)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitName</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitName" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitName)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitContact</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitContact" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitContact)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitEmail</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitEmail" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitEmail)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitAddress</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitAddress" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitAddress)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitDialogue</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitDialogue" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitDialogue)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>BranchUnitMessage</label>
+                        <SfTextBox @bind-Value="branchUnitEntity.BranchUnitMessage" class="form-control" />
+                        <ValidationMessage For="@(() => branchUnitEntity.BranchUnitMessage)" />
+                    </div>
+                </div>
+            </div>.
+
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm d-flex flex-column">
+                    <div class="e-card shadow-sm p-3 h-100">
+                        <div class="e-card-header">
+                            <div class="e-card-header-caption">
+                                <span class="e-card-header-title text-primary">User Image</span>
+                            </div>
+                        </div>
+                        <div class="e-card-content text-center">
+                            <div class="image-preview-container mb-3">
+                                <div class="text-center">
+                                    <img src="@branchUnitEntity.ImagePreviewUrl" class="rounded-circle border" style="width:200px;height:200px;object-fit:cover;" />
+                                </div>
+
+                                <SfUploader AutoUpload="true" AllowMultiple="false" AllowedExtensions=".jpg,.png,.jpeg">
+                                    <UploaderEvents ValueChange="OnImageUpload"></UploaderEvents>
+                                </SfUploader>
+                            </div>
+                        </div>
+                       
+                        <div class="mt-3 d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit">
+                                @(IsEditMode ? "Update" : "Save")
+                            </button>
+                            <a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/BranchUnit/ComponentScript/GridviewAndDelete/BranchUnit">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-2">
-        <label>BranchUnitContact</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitContact" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitContact)" />
-    </div>
-    <div class="mb-2">
-        <label>BranchUnitEmail</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitEmail" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitEmail)" />
-    </div>
-    <div class="mb-2">
-        <label>BranchUnitAddress</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitAddress" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitAddress)" />
-    </div>
-    <div class="mb-2">
-        <label>BranchUnitDialogue</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitDialogue" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitDialogue)" />
-    </div>
-    @* <div class="mb-2"> 
-<label>BranchUnitLogo</label> 
-<InputText @bind-Value="BranchUnitEntity.BranchUnitLogo" class="form-control" /> 
-<ValidationMessage For="@(() => BranchUnitEntity.BranchUnitLogo)" /> 
-</div>  *@
-    <div class="mb-2">
-        <label>BranchUnitMessage</label>
-        <InputText @bind-Value="BranchUnitEntity.BranchUnitMessage" class="form-control" />
-        <ValidationMessage For="@(() => BranchUnitEntity.BranchUnitMessage)" />
-    </div>
-    <button class="btn btn-primary" type="submit">
-        @(IsEditMode ? "Update" : "Save")
-    </button>
-    <a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/BranchUnit/ComponentScript/GridviewAndDelete/BranchUnit">
-        Cancel
-    </a>
 </EditForm>
 @code {
     [Parameter] public int? Id { get; set; }
-    private BranchUnitEntity BranchUnitEntity = new();
+    private BranchUnitEntity branchUnitEntity = new();
     private List<BaseHospitalEntity> BaseHospitalNames = new(); // List of Foreign Key Columns
     private bool IsEditMode = false;
     protected override async Task OnInitializedAsync()
@@ -70,31 +99,78 @@
         if (Id != null && Id > 0)
         {
             IsEditMode = true;
-            BranchUnitEntity = await branchunit.GetBranchUnitById(Id.Value);
+            branchUnitEntity = await branchunit.GetBranchUnitById(Id.Value);
         }
         else
         {
-            BranchUnitEntity = new ();
-            //BranchUnitEntity.BaseHospitalId = 1;
-            //BranchUnitEntity.CreatedBy = 1; // set your user id
+            branchUnitEntity = new BranchUnitEntity();
+            branchUnitEntity.CreatedBy = 1; // set your user id
         }
     }
     private async Task HandleSubmit()
     {
-        // if (IsEditMode)
-        // {
-        //     BranchUnitEntity.UpdatedBy = 1; // set current user ID
-        //     BranchUnitEntity.BranchUnitId = Id.Value;
-        //     await branchunit.UpdateBranchUnit(BranchUnitEntity);
-        //     Nav.NavigateTo($"/branchunit");
-        // }
-        // else
-        // {
-        int result;
-        BranchUnitEntity.BaseHospitalId = 1;
-        BranchUnitEntity.CreatedBy = 1;
-        result = await branchunit.CreateBranchUnit(BranchUnitEntity);
-        Nav.NavigateTo($"/branchunit");
-        //}
+        if (IsEditMode)
+        {
+            if (Id != null && Id > 0)
+            {
+                branchUnitEntity.UpdatedBy = 1; // set current user ID
+                branchUnitEntity.BranchUnitId = Id.Value;
+                await branchunit.UpdateBranchUnit(branchUnitEntity);
+                Nav.NavigateTo($"/branchunit");
+            }
+        }
+        else
+        {
+            branchUnitEntity.CreatedBy = 1;
+            await branchunit.CreateBranchUnit(branchUnitEntity);
+            Nav.NavigateTo($"/branchunit");
+        }
     }
+    private async Task OnImageUpload(UploadChangeEventArgs args)
+    {
+        var file = args.Files.FirstOrDefault();
+
+        if (file != null)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream();
+
+                if (file?.File is Microsoft.AspNetCore.Http.IFormFile formFile)
+                {
+                    await formFile.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Microsoft.AspNetCore.Components.Forms.IBrowserFile browserFile)
+                {
+                    using var fs = browserFile.OpenReadStream();
+                    await fs.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Stream directStream)
+                {
+                    await directStream.CopyToAsync(memoryStream);
+                }
+
+                var bytes = memoryStream.ToArray();
+
+                // Replace previous image
+                branchUnitEntity.BranchUnitLogo = bytes;
+
+                string base64 = Convert.ToBase64String(bytes);
+                var mimeType = file?.FileInfo?.Type ?? "image/png";
+                branchUnitEntity.ImagePreviewUrl = $"data:{mimeType};base64,{base64}";
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            branchUnitEntity.BranchUnitLogo = null;
+        }
+    }
+
+
 }
