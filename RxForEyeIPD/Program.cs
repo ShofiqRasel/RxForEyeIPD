@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using RxForEyeIPD.Components;
+using RxForEyeIPD.Components.Pages.Settings.Account.CsScript;
 using RxForEyeOPD.Extensions;
 using Syncfusion.Blazor;
 
@@ -20,27 +22,27 @@ builder.Services.AddInterfaceApplicationServices();
 //builder.Services.AddIhmsServices();
 
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    foreach (var policy in UserPolicy.GetPolicies())
-//    {
-//        options.AddPolicy(policy, e => e.RequireClaim(policy));
-//    }
-//});
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var policy in UserPolicy.GetPolicies())
+    {
+        options.AddPolicy(policy, e => e.RequireClaim(policy));
+    }
+});
 
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
-//        options.Cookie.Name = "auth_token";
-//        options.LoginPath = "/login";
-//        options.Cookie.MaxAge = TimeSpan.FromDays(1);
-//        options.AccessDeniedPath = "/access-denied";
-//        options.Cookie.HttpOnly = true; //prevent client-side scripts (javascript) from accessing the cookie
-//        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //ensure the cookie is only sent over HTTPS
-//        options.Cookie.SameSite = SameSiteMode.Lax;
-//    });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "auth_token";
+        options.LoginPath = "/login";
+        options.Cookie.MaxAge = TimeSpan.FromDays(1);
+        options.AccessDeniedPath = "/access-denied";
+        options.Cookie.HttpOnly = true; //prevent client-side scripts (javascript) from accessing the cookie
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //ensure the cookie is only sent over HTTPS
+        options.Cookie.SameSite = SameSiteMode.Lax;
+    });
 
-//builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddCascadingAuthenticationState();
 
 
 var app = builder.Build();
@@ -59,8 +61,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.MapRazorComponents<App>()

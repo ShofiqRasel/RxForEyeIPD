@@ -130,6 +130,37 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                     return MapUsers(dr);
                 throw new KeyNotFoundException($"PassUsers with ID {PassUsersId} not found");
             }
+            public async Task<UsersEntity> GetUserDetail(string userName)
+            {
+                var userAccount = new UsersEntity();
+                try
+                {
+                    string query = @"
+            set dateformat dmy 
+            select id, user_name, password, role from user_accounts where user_name = @userName";
+
+                    using SqlConnection con = new SqlConnection(_ConStrRxForEyeIPD);
+                    using SqlCommand cmd = new(query, con);
+                    cmd.Parameters.AddWithValue("@userName", userName);
+
+                    await con.OpenAsync();
+                    using SqlDataReader dr = await cmd.ExecuteReaderAsync();
+
+                    while (await dr.ReadAsync())
+                    {
+                        userAccount.UserId = Convert.ToInt32(dr["UserId"]);
+                        userAccount.UserName = dr["UserName"]?.ToString() ?? "";
+                        userAccount.UserPassword = dr["UserPassword"]?.ToString() ?? "";
+                        //userAccount.UserRoleId = dr["UserRoleId"]?.ToString() ?? "";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error loading prescriptions: {ex.Message}");
+                }
+
+                return userAccount;
+            }
             public async Task<int> CreateUsers(UsersEntity PassUsers)
             {
                 using var con = new SqlConnection(_ConStrRxForEyeIPD);
