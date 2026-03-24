@@ -1,0 +1,111 @@
+@page "/userlist" 
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@rendermode InteractiveServer
+@inject IUsers UsersService
+@inject NavigationManager Nav
+<PageTitle>List of Users</PageTitle>
+<h3>List of Users</h3>
+<div class="row pb-2">
+    <div class="col-12 text-end">
+        @* Set your href manually according to your need. *@ 
+        <a class="btn btn-sm btn-primary" href="/users">
+            New Entry
+        </a>
+    </div>
+</div>
+<div class="row pb-2">
+    <div class="col-md-12">
+        <SfGrid DataSource="@Userss" AllowPaging="true">
+            <GridPageSettings PageSize="5"></GridPageSettings>
+            <GridColumns>
+                <GridColumn HeaderText="Image" Width="100" TextAlign="TextAlign.Center">
+                    <Template>
+                        @{
+                            // বর্তমান রো-এর ডেটা এক্সেস করা
+                            var userimg = (context as UsersEntity);
+                            if (userimg != null && userimg.UserImage != null)
+                            {
+                                <img src="@ConvertToImage(userimg.UserImage)" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                // ডাটা না থাকলে একটি আইকন বা টেক্সট দেখান
+                                <div class="no-image">
+                                    <img src="Images/MiscImage/default-avatar.png" class="rounded-circle border" style="width:50px;height:50px;object-fit:cover;" />
+                                </div>
+                            }
+                        }
+                    </Template>
+                </GridColumn><GridColumn Field="UserId" HeaderText="UserId" Width="100"></GridColumn>
+                <GridColumn Field="UserRoleId" HeaderText="UserRoleId" Width="100"></GridColumn>
+                <GridColumn Field="UserName" HeaderText="UserName" Width="100"></GridColumn>
+                <GridColumn Field="UserEmail" HeaderText="UserEmail" Width="100"></GridColumn>
+                <GridColumn Field="DeviceName" HeaderText="DeviceName" Width="100"></GridColumn>
+                <GridColumn Field="ScreenSize" HeaderText="ScreenSize" Width="100"></GridColumn>
+                <GridColumn Field="Manufacturer" HeaderText="Manufacturer" Width="100"></GridColumn>
+                <GridColumn Field="IpAddress" HeaderText="IpAddress" Width="100"></GridColumn>
+                <GridColumn Field="LockHours" HeaderText="Lock Hours" Width="100"></GridColumn>
+                <GridColumn Field="RememberMe" HeaderText="Remember Me" Width="100"></GridColumn>
+                <GridColumn HeaderText="Actions" Width="100">
+                    <Template>
+                        @{
+                            var row = context as UsersEntity;
+                        }
+                        @if (row == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary" @onclick="() => EditUsers(row.UserId)">
+                                    Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteUsers(row.UserId)">
+                                    Delete
+                                </button>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </div>
+</div>
+@code {
+    public List<UsersEntity> Userss = new();
+    private UsersEntity UsersEntity = new();
+    protected override async Task OnInitializedAsync()
+    {
+        Userss = await UsersService.GetAllUsers();
+    }
+    void EditUsers(int id)
+    {
+        Nav.NavigateTo($"/users/{id}");
+    }
+    private async Task DeleteUsers(int id)
+    {
+        UsersEntity.UserId = id;
+        UsersEntity.DeletedBy = 1;
+        var result = await UsersService.DeleteUsers(UsersEntity);
+        if (result > 0)
+        {
+            Userss = await UsersService.GetAllUsers();// Optionally show a success message
+        }
+        else
+        {
+            // Optionally show an error message
+        }
+    }
+
+    public string ConvertToImage(byte[] imageBytes)
+    {
+        if (imageBytes != null && imageBytes.Length > 0)
+        {
+            // byte[] কে base64 string এ রূপান্তর করা হচ্ছে
+            string base64 = Convert.ToBase64String(imageBytes);
+            return $"data:image/png;base64,{base64}";
+        }
+        return "Images/MiscImage/default-avatar.png"; // ছবি না থাকলে ডিফল্ট ছবি
+    }
+}

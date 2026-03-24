@@ -8,7 +8,7 @@ if object_id ('TableCreatorFirst') is not null
 drop table TableCreatorFirst
 go
 
-select * into TableCreatorFirst from OPENROWSET('Microsoft.ACE.OLEDB.12.0',  'Excel 8.0;HDR=YES;Database=E:\DotNetCoreProjects\RxForEyeIPD\RxForEyeIPD\Files\02. WithoutPrimaryAndWithForeignKey\TableCreateWithoutPrimaryAndWithForeignKey.xlsx', 'select * from [TblBranchUnit$]') 
+select * into TableCreatorFirst from OPENROWSET('Microsoft.ACE.OLEDB.12.0',  'Excel 8.0;HDR=YES;Database=E:\DotNetCoreProjects\RxForEyeIPD\RxForEyeIPD\Files\02. WithoutPrimaryAndWithForeignKey\TableCreateWithoutPrimaryAndWithForeignKey.xlsx', 'select * from [TblUsers$]') 
 
 
 if object_id ('TableCreator') is not null

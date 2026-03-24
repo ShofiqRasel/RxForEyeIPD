@@ -1,0 +1,192 @@
+@page "/users" 
+@page "/users/{Id:int}" 
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole.srvUserRole
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@rendermode InteractiveServer
+@inject IUsers users
+@inject IUserRole userRole
+@inject NavigationManager Nav
+<PageTitle>Users</PageTitle>
+<h6>@(IsEditMode ? "Edit Users" : "Add Users")</h6>
+<EditForm Model="usersEntity" OnValidSubmit="HandleSubmit" FormName="saveUser">
+    <DataAnnotationsValidator />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm">
+                    <div class="mb-2">
+                        <label>UserRoleId</label>
+                        <SfDropDownList TValue="int" TItem="UserRoleEntity" Placeholder="Select UserRoleName" DataSource="@userRoleEntity" @bind-Value="@usersEntity.UserRoleId">
+                            <DropDownListFieldSettings Value="UserRoleId" Text="UserRoleName"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                        <ValidationMessage For="@(() => usersEntity.UserRoleId)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>UserName</label>
+                        <SfTextBox @bind-Value="usersEntity.UserName" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.UserName)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>UserEmail</label>
+                        <SfTextBox @bind-Value="usersEntity.UserEmail" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.UserEmail)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>UserPassword</label>
+                        <SfTextBox @bind-Value="usersEntity.UserPassword" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.UserPassword)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>DeviceName</label>
+                        <SfTextBox @bind-Value="usersEntity.DeviceName" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.DeviceName)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>ScreenSize</label>
+                        <SfTextBox @bind-Value="usersEntity.ScreenSize" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.ScreenSize)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Manufacturer</label>
+                        <SfTextBox @bind-Value="usersEntity.Manufacturer" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.Manufacturer)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>IpAddress</label>
+                        <SfTextBox @bind-Value="usersEntity.IpAddress" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.IpAddress)" />
+                    </div>
+                    <div class="mb-2">
+                        <label>LockHours</label>
+                        <SfNumericTextBox @bind-Value="usersEntity.LockHours" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.LockHours)" />
+                    </div><div class="mb-2">
+                        <label>RememberMe</label>
+                        @* <SfCheckBox Label="Is Active" @bind-Checked="usersEntity.RememberMe"></SfCheckBox> *@
+                        <SfSwitch @bind-Checked="usersEntity.RememberMe"></SfSwitch>
+                        <ValidationMessage For="@(() => usersEntity.RememberMe)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card p-3 h-100 shadow-sm d-flex flex-column">
+                    <div class="e-card-content text-center">
+                        <div class="image-preview-container mb-3">
+                            <div class="text-center">
+                                <img src="@usersEntity.ImagePreviewUrl" class="rounded-circle border" style="width:200px;height:200px;object-fit:cover;" />
+                            </div>
+
+                            <SfUploader AutoUpload="true" AllowMultiple="false" AllowedExtensions=".jpg,.png,.jpeg">
+                                <UploaderEvents ValueChange="OnImageUpload"></UploaderEvents>
+                            </SfUploader>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">
+                            @(IsEditMode ? "Update" : "Save")
+                        </button>
+                        <a class="btn btn-secondary ms-2" href="/userlist">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    [Parameter] public int? Id { get; set; }
+    private UsersEntity usersEntity = new();
+    private List<UserRoleEntity> userRoleEntity = new(); // List of Foreign Key Columns
+    private bool IsEditMode = false;
+    protected override async Task OnInitializedAsync()
+    {
+        userRoleEntity = await userRole.GetAllUserRole(); // add this line to OnInitilizeAsync
+        if (Id != null && Id > 0)
+        {
+            IsEditMode = true;
+            usersEntity = await users.GetUsersById(Id.Value);
+        }
+        else
+        {
+            usersEntity = new UsersEntity();
+            usersEntity.CreatedBy = 1; // set your user id
+        }
+    }
+    private async Task HandleSubmit()
+    {
+        if (IsEditMode)
+        {
+            if (Id != null && Id > 0)
+            {
+                usersEntity.UpdatedBy = 1; // set current user ID
+                usersEntity.UserId = Id.Value;
+                await users.UpdateUsers(usersEntity);
+                Nav.NavigateTo($"/userlist");
+            }
+        }
+        else
+        {
+            usersEntity.CreatedBy = 1;
+            await users.CreateUsers(usersEntity);
+            //Nav.NavigateTo($"/userlist");
+            ResetForm();
+        }
+        //StateHasChanged();
+    }
+
+    private async Task OnImageUpload(UploadChangeEventArgs args)
+    {
+        var file = args.Files.FirstOrDefault();
+
+        if (file != null)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream();
+
+                if (file?.File is Microsoft.AspNetCore.Http.IFormFile formFile)
+                {
+                    await formFile.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Microsoft.AspNetCore.Components.Forms.IBrowserFile browserFile)
+                {
+                    using var fs = browserFile.OpenReadStream();
+                    await fs.CopyToAsync(memoryStream);
+                }
+                else if (file?.File is Stream directStream)
+                {
+                    await directStream.CopyToAsync(memoryStream);
+                }
+
+                var bytes = memoryStream.ToArray();
+
+                // Replace previous image
+                usersEntity.UserImage = bytes;
+
+                string base64 = Convert.ToBase64String(bytes);
+                var mimeType = file?.FileInfo?.Type ?? "image/png";
+                usersEntity.ImagePreviewUrl = $"data:{mimeType};base64,{base64}";
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            usersEntity.UserImage = null;
+        }
+    }
+
+    private void ResetForm()
+    {
+        IsEditMode = false;
+        usersEntity = new();
+        usersEntity.ImagePreviewUrl = "Images/MiscImage/default-avatar.png";
+        StateHasChanged();
+    }
+}
