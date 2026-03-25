@@ -21,48 +21,51 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <!-- ms-auto pushes everything to the right -->
-                <!-- Patient -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#">
-                        <i class="e-icons e-people"></i> Patient
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-
-                        <!-- Submenu -->
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" href="#">
-                                <span class="material-symbols-outlined">patient_list</span> Op Management
+                <AuthorizeView Policy="@UserPolicy.VIEW_PRODUCT">
+                    <Authorized>
+                        <!-- Patient -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#">
+                                <i class="e-icons e-people"></i> Patient
                             </a>
 
-                            <ul class="dropdown-menu">
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="e-icons e-edit"></i> New Registration </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-cash-register"></i> Billing </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/visual-acuity"> <i class="fa-solid fa-magnifying-glass-plus"></i> VA & Refraction </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/historyandcomplaints"> <i class="fa fa-history"></i> History & Comp. </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/dynamicparentcomponent"> <i class="fa fa-history"></i> Dynamic Component </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/doctorexam"> <i class="fas fa-user-md"></i> Doctor Exam </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/counselling"> <i class="fas fa-hands-helping"></i> Counselling </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescription"> <i class="fa-solid fa-prescription"></i> Medicine Prescription </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescriptionwithdeleteupdate"> <i class="fa-solid fa-prescription"></i> Prescription With Edit Delete</a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-regular fa-folder-closed"></i> Medical Record </a> </li>
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="/smooth-scroll"> <i class="fa-regular fa-folder-closed"></i> Smooth Scroll </a> </li>
+                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                <!-- Submenu -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">
+                                        <span class="material-symbols-outlined">patient_list</span> Op Management
+                                    </a>
+
+                                    <ul class="dropdown-menu">
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="e-icons e-edit"></i> New Registration </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-cash-register"></i> Billing </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/visual-acuity"> <i class="fa-solid fa-magnifying-glass-plus"></i> VA & Refraction </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/historyandcomplaints"> <i class="fa fa-history"></i> History & Comp. </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/dynamicparentcomponent"> <i class="fa fa-history"></i> Dynamic Component </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/doctorexam"> <i class="fas fa-user-md"></i> Doctor Exam </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/counselling"> <i class="fas fa-hands-helping"></i> Counselling </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescription"> <i class="fa-solid fa-prescription"></i> Medicine Prescription </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/medicineprescriptionwithdeleteupdate"> <i class="fa-solid fa-prescription"></i> Prescription With Edit Delete</a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-regular fa-folder-closed"></i> Medical Record </a> </li>
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="/smooth-scroll"> <i class="fa-regular fa-folder-closed"></i> Smooth Scroll </a> </li>
+                                    </ul>
+                                </li>
+
+                                <!-- Submenu -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">
+                                        <span class="material-symbols-outlined">assignment_add</span> Reports
+                                    </a>
+
+                                    <ul class="dropdown-menu">
+                                        <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-search"></i> Cencus </a> </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
-
-                        <!-- Submenu -->
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" href="#">
-                                <span class="material-symbols-outlined">assignment_add</span> Reports
-                            </a>
-
-                            <ul class="dropdown-menu">
-                                <li> <a class="dropdown-item text-decoration-none p-2" href="#"> <i class="fa-solid fa-search"></i> Cencus </a> </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
+                    </Authorized>
+                </AuthorizeView>
                 <!-- Outreach -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#">

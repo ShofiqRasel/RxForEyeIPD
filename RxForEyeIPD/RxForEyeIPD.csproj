@@ -10,12 +10,14 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="Syncfusion.Blazor.Charts" Version="33.1.44" />
     <PackageReference Include="Syncfusion.Blazor.DataForm" Version="33.1.44" />
     <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="33.1.44" />

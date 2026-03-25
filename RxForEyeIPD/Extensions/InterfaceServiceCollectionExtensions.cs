@@ -5,7 +5,7 @@ using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srv
 using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole.srvUserRole;
 using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers;
 
-namespace RxForEyeOPD.Extensions
+namespace RxForEyeIPD.Extensions
 {
     public static class InterfaceServiceCollectionExtensions
     {
@@ -16,7 +16,7 @@ namespace RxForEyeOPD.Extensions
             services.AddScoped<IUsers, UsersRepository>();
             services.AddScoped<IBranchUnit, BranchUnitRepository>();
             services.AddScoped<IUserRole, UserRoleRepository>();
-            services.AddScoped<IUserAccountPolicy, UserAccountPolicyService>();
+            //services.AddScoped<IUserAccountPolicy, UserAccountPolicyService>();
             return services;
         }
     }

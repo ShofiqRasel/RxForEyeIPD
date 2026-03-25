@@ -1,59 +1,33 @@
 ﻿@inherits LayoutComponentBase
-@using Microsoft.AspNetCore.Components.Authorization
-
-@* <div class="page">
-    <AuthorizeView>
-        <Authorized>
-            <div class="sidebar">
-                <MenuBarFeatures />
-            </div>
-        </Authorized>
-        <NotAuthorized>
-        </NotAuthorized>
-    </AuthorizeView>
-
-    <main>
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <span>User: @context.User.Identity?.Name</span>
-                    <a href="logout">Logout</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="/login">Login</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div> *@
 
 <div class="page">
-    <AuthorizeView>
-        <Authorized>
-                <MenuBarFeatures />
-        </Authorized>
-    </AuthorizeView>
+    <div class="sidebar">
+        @* <NavMenu /> *@
+        <MenuBarFeatures/>
+    </div>
 
     <main>
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
                     <span>Hello, @context.User.Identity?.Name!</span>
-                    <a href="/logout" class="ms-3">Logout</a>
+                    <a href="/logout">Logout</a>
                 </Authorized>
                 <NotAuthorized>
                     <a href="/login">Login</a>
-                    <a href="/logout" class="ms-3">Logout</a>
                 </NotAuthorized>
             </AuthorizeView>
+
         </div>
 
         <article class="content px-4">
             @Body
         </article>
     </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
 </div>
