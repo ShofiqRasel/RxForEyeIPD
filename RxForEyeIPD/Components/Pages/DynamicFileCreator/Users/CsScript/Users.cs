@@ -65,9 +65,6 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                 if (await dr.ReadAsync())
                 {
                     string storedHash = dr["UserPassword"].ToString() ?? "";
-
-                    // VERIFICATION HAPPENS HERE
-                    // BCrypt.Verify compares the plain text input with the hashed DB string
                     bool isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
 
                     if (isValid)
@@ -76,7 +73,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                     }
                 }
 
-                return null; // Return null if email doesn't exist or password fails
+                return null; 
             }
             public async Task<List<UsersEntity>> GetAllUsers()
             {
@@ -242,7 +239,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
 
                     // DO NOT map UserPassword here if using Hashing. 
                     // Keep it null/empty so the UI doesn't show the secret hash.
-                    UserPassword = string.Empty,
+                    //UserPassword = string.Empty,
 
                     DeviceName = dr["DeviceName"] == DBNull.Value ? null : Convert.ToString(dr["DeviceName"]),
                     ScreenSize = dr["ScreenSize"] == DBNull.Value ? null : Convert.ToString(dr["ScreenSize"]),

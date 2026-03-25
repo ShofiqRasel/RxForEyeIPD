@@ -56,7 +56,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.Account.CsScript
             {
                 string query = @"
             set dateformat dmy 
-            select UserId, UserName, UserPassword, UserRoleId from Users where user_name = @userName";
+            select UserId, UserName, UserPassword, UserRoleId from Users where UserName = @userName";
 
                 using var con = new SqlConnection(_ConStrRxForEyeIPD);
                 using SqlCommand cmd = new(query, con);
@@ -70,7 +70,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.Account.CsScript
                     userAccount.UserId = Convert.ToInt32(dr["UserId"]);
                     userAccount.UserName = dr["UserName"]?.ToString() ?? "";
                     userAccount.UserPassword = dr["UserPassword"]?.ToString() ?? "";
-                    userAccount.UserRoleId = Convert.ToInt32("UserRoleId");
+                    userAccount.UserRoleId = Convert.ToInt32(dr["UserRoleId"]);
                 }
             }
             catch (Exception ex)
