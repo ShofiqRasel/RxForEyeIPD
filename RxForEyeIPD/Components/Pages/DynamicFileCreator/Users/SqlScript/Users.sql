@@ -136,3 +136,33 @@ Begin
         Select UserRoleId from Users  where IsActive = 'Yes' and UserRoleId = @UserRoleId 
 End 
 Go 
+
+if object_id ('UserAccountPolicy') is not null
+drop table UserAccountPolicy
+go
+
+CREATE TABLE UserAccountPolicy
+(
+PolicyId int IDENTITY(1,1) NOT NULL,
+UserId int NOT NULL,
+AssingnUserPolicy nvarchar(50) NULL,
+IsEnabled bit NOT NULL
+)
+GO
+
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'VIEW_PRODUCT', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'ADD_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'EDIT_PRODUCT', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'DELETE_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'VIEW_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'ADD_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'EDIT_PRODUCT', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DELETE_PRODUCT', 1)
+go
+
+/*
+
+select PolicyId, UserId, AssingnUserPolicy, IsEnabled from UserAccountPolicy where UserId = 1 and IsEnabled = 1
+select * from users
+select UserId, UserName, UserPassword, UserRoleId from Users where user_name = 'rasel@gmail.com'
+*/

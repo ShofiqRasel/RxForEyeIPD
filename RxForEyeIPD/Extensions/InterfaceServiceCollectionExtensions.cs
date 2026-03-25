@@ -1,5 +1,6 @@
 ﻿
 using RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript;
+using RxForEyeIPD.Components.Pages.Settings.Account.CsScript;
 using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.BranchUnit.srvBranchUnit;
 using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole.srvUserRole;
 using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers;
@@ -15,6 +16,7 @@ namespace RxForEyeOPD.Extensions
             services.AddScoped<IUsers, UsersRepository>();
             services.AddScoped<IBranchUnit, BranchUnitRepository>();
             services.AddScoped<IUserRole, UserRoleRepository>();
+            services.AddScoped<IUserAccountPolicy, UserAccountPolicyService>();
             return services;
         }
     }

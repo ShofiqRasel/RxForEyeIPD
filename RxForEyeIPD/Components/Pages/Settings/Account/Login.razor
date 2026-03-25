@@ -5,7 +5,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Security.Claims
 @using RxForEyeIPD.Components.Pages.Settings.Account.CsScript
-@inject clsAdoDotNetFroUser adoDotNetFroUser
+@inject IUserAccountPolicy userAccountPolicy
 @inject NavigationManager navigationManager
 
 <div class="row">
@@ -52,54 +52,30 @@
         //যদি ইউজারনেম বা পাসওয়ার্ড ভুল হয়, তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
         //var userAccount = dbContext.UserAccounts.Where(u => u.UserName == LoginModel.UserName).FirstOrDefault();
 
-        var userAccount = await adoDotNetFroUser.GetUserDetail(LoginModel.UserName);
+        var userAccount = await userAccountPolicy.GetUserDetail(LoginModel.UserName);
 
-        if (userAccount == null || userAccount.Password != LoginModel.Password)
+        if (userAccount == null || userAccount.UserPassword != LoginModel.Password)
         {
             ErrorMessage = "Invalid username or password.";
             return;
         }
 
-        //এখানে ক্লেইম তৈরী করা হবে, যেখানে ইউজারনেম এবং ইউজার আইডি থাকবে। এছাড়াও ইউজারের পলিসি অনুযায়ী অতিরিক্ত ক্লেইম যোগ করা হবে।
-        // তারপর এই ক্লেইমগুলো দিয়ে একটি ClaimsIdentity তৈরি করা হবে এবং সেটি দিয়ে একটি ClaimsPrincipal তৈরি করে সাইন ইন করা হবে।
-
-        // var claims = new List<Claim>
-        // {
-        //     new Claim(ClaimTypes.Name, LoginModel.UserName)
-        // };
-
-        // var userAccountPolicies = dbContext.UserAccountPolicies
-        //     .Where(p => p.UserAccountId == userAccount.Id && p.IsEnabled)
-        //     .ToList();
-
-        // foreach (var policy in userAccountPolicies)
-        // {
-        //     claims.Add(new Claim(policy.UserPolicy!, "true"));
-        // }
-
-        // var principal = new ClaimsPrincipal(identity);
-        // await HttpContext.SignInAsync(principal);
-
-        // var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-
+        
         // এখানে ক্লেইম তৈরী করা হবে, যেখানে ইউজারনেম এবং ইউজার আইডি থাকবে। এছাড়াও ইউজারের পলিসি অনুযায়ী অতিরিক্ত ক্লেইম যোগ করা হবে।
 
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, LoginModel.UserName),
-            new Claim(ClaimTypes.Role, userAccount.Role),
-            new Claim(ClaimTypes.NameIdentifier, userAccount.Id.ToString()) // 👈 USER ID
+            //new Claim(ClaimTypes.Role, userAccount.Role),
+            //new Claim(ClaimTypes.NameIdentifier, userAccount.Id.ToString()) // 👈 USER ID
         };
 
-        // add policy claims
-        //var userAccountPolicies = dbContext.UserAccountPolicies.Where(p => p.UserAccountId == userAccount.Id && p.IsEnabled).ToList();
 
-        var userAccountPolicies = await adoDotNetFroUser.GetuserAccountPolicies(userAccount.Id);
+        var userAccountPolicies = await userAccountPolicy.GetuserAccountPolicies(userAccount.UserId);
 
         foreach (var policy in userAccountPolicies)
         {
-            claims.Add(new Claim(policy.UserPolicy!, "true"));
+            claims.Add(new Claim(policy.AssingnUserPolicy, "true"));
         }
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
