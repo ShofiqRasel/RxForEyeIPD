@@ -1,8 +1,12 @@
 @page "/userlist" 
+@using Microsoft.AspNetCore.Components.Authorization
+@using RxForEyeIPD.Components.Pages.Settings.Account.CsScript
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
 @rendermode InteractiveServer
 @inject IUsers UsersService
 @inject NavigationManager Nav
+<AuthorizeView Policy="@UserPolicy.VIEW_PRODUCT"/>
+
 <PageTitle>List of Users</PageTitle>
 <h3>List of Users</h3>
 <div class="row pb-2">

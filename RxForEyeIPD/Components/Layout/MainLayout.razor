@@ -30,19 +30,24 @@
         </article>
     </main>
 </div> *@
+
 <div class="page">
+    <AuthorizeView>
+        <Authorized>
+                <MenuBarFeatures />
+        </Authorized>
+    </AuthorizeView>
+
     <main>
-        <div class="main">
+        <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    @* <span>Hello, @context.User.Identity?.Name!</span>
-                    <a href="/logout">Logout</a> *@
-                    <MenuBarFeatures />
+                    <span>Hello, @context.User.Identity?.Name!</span>
+                    <a href="/logout" class="ms-3">Logout</a>
                 </Authorized>
                 <NotAuthorized>
-                    <div class="top-row px-4">
-                        <a href="/login">Login</a>
-                    </div>
+                    <a href="/login">Login</a>
+                    <a href="/logout" class="ms-3">Logout</a>
                 </NotAuthorized>
             </AuthorizeView>
         </div>

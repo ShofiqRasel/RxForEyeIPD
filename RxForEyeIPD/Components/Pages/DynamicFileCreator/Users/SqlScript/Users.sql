@@ -151,13 +151,13 @@ IsEnabled bit NOT NULL
 GO
 
 insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'VIEW_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'ADD_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'ADD_PRODUCT', 1)
 insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'EDIT_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'DELETE_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'DELETE_PRODUCT', 1)
 insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'VIEW_PRODUCT', 0)
 insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'ADD_PRODUCT', 0)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'EDIT_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DELETE_PRODUCT', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'EDIT_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DELETE_PRODUCT', 0)
 go
 
 /*

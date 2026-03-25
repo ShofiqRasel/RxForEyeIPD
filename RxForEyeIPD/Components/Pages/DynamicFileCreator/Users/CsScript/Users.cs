@@ -52,12 +52,12 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                 ?? throw new ArgumentNullException(nameof(config),
                 "Connection string 'ConStrRxForEyeIPD' not found in configuration");
             }
-            public async Task<UsersEntity?> AuthenticateUser(string email, string plainPassword)
+            public async Task<UsersEntity?> AuthenticateUser(string userName, string plainPassword)
             {
                 using var con = new SqlConnection(_ConStrRxForEyeIPD);
                 // Use a specific proc or query to get the user by email
-                using var cmd = new SqlCommand("SELECT * FROM Users WHERE UserEmail = @Email AND IsActive = 'Yes'", con);
-                cmd.Parameters.AddWithValue("@Email", email);
+                using var cmd = new SqlCommand("SELECT * FROM Users WHERE UserName = @userName AND IsActive = 'Yes'", con);
+                cmd.Parameters.AddWithValue("@UserName", @userName);
 
                 await con.OpenAsync();
                 using var dr = await cmd.ExecuteReaderAsync();
