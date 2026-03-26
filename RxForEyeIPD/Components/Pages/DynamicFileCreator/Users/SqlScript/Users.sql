@@ -69,6 +69,16 @@ Begin
                 @LockHours,
 			    @RememberMe,
                 @CreatedBy) 
+                
+            -- Assign User Policy for The User Inserted
+            declare @UsrId int = (select UserId from Users where UserEmail = @UserEmail) 
+               
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'VIEW_PRODUCT', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'ADD_PRODUCT', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'EDIT_PRODUCT', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'DELETE_PRODUCT', 0)
+            -- Assign User Policy for The User Inserted
+                
     End -- if not exists end 
 End 
 Go 
