@@ -1,4 +1,4 @@
-﻿namespace RxForEyeIPD.Model
+﻿namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 {
     public class UserPolicy
     {

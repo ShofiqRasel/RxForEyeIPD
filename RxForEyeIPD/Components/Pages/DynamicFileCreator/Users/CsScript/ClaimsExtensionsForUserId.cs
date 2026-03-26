@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace RxForEyeIPD.Model
+namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 {
     public static class ClaimsExtensionsForUserId
     {

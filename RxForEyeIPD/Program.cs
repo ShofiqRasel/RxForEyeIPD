@@ -1,16 +1,10 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RxForEyeIPD.Components;
-using RxForEyeIPD.Components.Pages.Settings.Account.CsScript;
-using RxForEyeIPD.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
-
+using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript;
 using RxForEyeIPD.Extensions;
+using RxForEyeIPD.Services;
 using Syncfusion.Blazor;
-using System.Security.Claims;
-using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers;
-using RxForEyeIPD.Model;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +28,21 @@ builder.Services.AddAuthorization(options =>
     }
 });
 
+
+//Example Code Block: Define a policy named "ManagementOnly" that requires EITHER Admin OR Manager OR CEO
+//builder.Services.AddAuthorization(options =>
+//{
+//    // Define a policy named "ManagementOnly" that requires EITHER Admin OR Manager
+//    options.AddPolicy("ManagementOnly", policy =>
+//        policy.RequireRole("Admin", "Manager", "CEO"));
+//});
+
+//< AuthorizeView Policy = "ManagementOnly" >
+//    < Authorized >
+//        < button class= "btn btn-primary" > Manage Staff </ button >
+//    </ Authorized >
+//</ AuthorizeView >
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -46,9 +55,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddCascadingAuthenticationState();
-
-
-builder.Services.AddScoped<clsAdoDotNetFroUser>();
 
 
 var app = builder.Build();

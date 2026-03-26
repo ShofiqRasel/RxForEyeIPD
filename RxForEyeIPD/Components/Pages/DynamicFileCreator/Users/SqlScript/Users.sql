@@ -137,6 +137,31 @@ Begin
 End 
 Go 
 
+
+if object_id ('UserPolicy') is not null
+drop table UserPolicy
+go
+
+create table UserPolicy
+(
+PolicyId	int identity(1,1) Not Null,
+PolicyName  varchar(50),
+CreatedBy	Int   Not Null , 
+UpdatedBy	Int   Null , 
+DeletedBy	Int   Null , 
+CreatedAt	DateTime   Not Null Default Getdate(), 
+UpdatedAt	DateTime   Null , 
+DeletedAt	DateTime   Null , 
+IsActive	char (3) Not Null Default 'Yes'
+)
+
+insert into UserPolicy (PolicyName, CreatedBy) values ('VIEW_PRODUCT', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('EDIT_PRODUCT', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('ADD_PRODUCT', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('DELETE_PRODUCT', 1)
+go
+
+
 if object_id ('UserAccountPolicy') is not null
 drop table UserAccountPolicy
 go
@@ -160,9 +185,12 @@ insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 
 insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DELETE_PRODUCT', 0)
 go
 
+
+
 /*
 
 select PolicyId, UserId, AssingnUserPolicy, IsEnabled from UserAccountPolicy where UserId = 1 and IsEnabled = 1
 select * from users
 select UserId, UserName, UserPassword, UserRoleId from Users where user_name = 'rasel@gmail.com'
+select PolicyName FROM UserPolicy where IsActive='Yes'
 */

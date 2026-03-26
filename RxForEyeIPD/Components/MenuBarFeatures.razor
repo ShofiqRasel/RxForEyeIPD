@@ -1,5 +1,6 @@
 ﻿@page "/menubar-features"
 @using Microsoft.AspNetCore.Components.Authorization
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @using RxForEyeIPD.Model
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
@@ -23,6 +24,7 @@
             <ul class="navbar-nav ms-auto">
                 <!-- ms-auto pushes everything to the right -->
                 <AuthorizeView Policy="@UserPolicy.VIEW_PRODUCT">
+                @* <AuthorizeView Roles="Admin"> *@
                     <Authorized>
                         <!-- Patient -->
                         <li class="nav-item dropdown">

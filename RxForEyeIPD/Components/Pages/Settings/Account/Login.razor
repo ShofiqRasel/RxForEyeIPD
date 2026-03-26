@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Security.Claims
-@inject clsAdoDotNetFroUser adoDotNetFroUser
+@inject IUserDTO userDTO
 @inject NavigationManager navigationManager
 
 <div class="row">
@@ -53,9 +53,9 @@
         //যদি ইউজারনেম বা পাসওয়ার্ড ভুল হয়, তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
         //var userAccount = dbContext.UserAccounts.Where(u => u.UserName == LoginModel.UserName).FirstOrDefault();
 
-        var userAccount = await adoDotNetFroUser.GetUserDetail(LoginModel.UserName);
+        var userAccount = await userDTO.GetUserDetail(LoginModel.UserName, LoginModel.Password);
 
-        if (userAccount == null || userAccount.Password != LoginModel.Password)
+        if (userAccount == null)
         {
             ErrorMessage = "Invalid username or password.";
             return;
@@ -63,20 +63,20 @@
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, LoginModel.UserName),
-            new Claim(ClaimTypes.Role, userAccount.Role),
-            new Claim(ClaimTypes.NameIdentifier, userAccount.Id.ToString()) // 👈 USER ID
+            new Claim(ClaimTypes.Name, userAccount.UserName),
+            new Claim(ClaimTypes.Role, userAccount.UserRole),
+            new Claim(ClaimTypes.NameIdentifier, userAccount.UserId.ToString())
         };
 
         // add policy claims
         //var userAccountPolicies = dbContext.UserAccountPolicies.Where(p => p.UserAccountId == userAccount.Id && p.IsEnabled).ToList();
 
-        var userAccountPolicies = await adoDotNetFroUser.GetuserAccountPolicies(userAccount.Id);
+        var userAccountPolicies = await userDTO.GetuserAccountPolicies(userAccount.UserId);
 
 
         foreach (var policy in userAccountPolicies)
         {
-            claims.Add(new Claim(policy.UserPolicy!, "true"));
+            claims.Add(new Claim(policy.AssingnUserPolicy!, "true"));
         }
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

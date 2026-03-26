@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @using RxForEyeIPD.Model
 @using System.Security.Claims
 <PageTitle>Home</PageTitle>
@@ -7,24 +8,17 @@
 
 Welcome to your new app.
 
-@* <AuthorizeView>
-    <Authorized>
-        <span>Hello, @context.User.Identity.Name!</span>
-    </Authorized>
-</AuthorizeView> *@
-
-
 <AuthorizeView>
     <Authorized Context="auth">
         <span>
             Hello, UserId:
-            @auth.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            @auth.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
             —
-            @auth.User.Identity?.Name!
+            @auth.User.Identity?.Name
         </span>
 
         <span class="row">
-            (From extension): @auth.User.GetUserId()
+            User ID from Extension: @auth.User.GetUserId()
         </span>
     </Authorized>
 </AuthorizeView>
