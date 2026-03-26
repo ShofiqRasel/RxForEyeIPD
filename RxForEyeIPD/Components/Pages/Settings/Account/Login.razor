@@ -1,13 +1,11 @@
 ﻿@page "/login"
 @using Microsoft.EntityFrameworkCore
-@using RxForEyeIPD.Data
 @using RxForEyeIPD.Model.Validation
 @using RxForEyeIPD.Services
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Security.Claims
-@inject AppDbContext dbContext
 @inject clsAdoDotNetFroUser adoDotNetFroUser
 @inject NavigationManager navigationManager
 
@@ -53,9 +51,9 @@
         }
 
         //যদি ইউজারনেম বা পাসওয়ার্ড ভুল হয়, তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
-        var userAccount = dbContext.UserAccounts.Where(u => u.UserName == LoginModel.UserName).FirstOrDefault();
+        //var userAccount = dbContext.UserAccounts.Where(u => u.UserName == LoginModel.UserName).FirstOrDefault();
 
-        //var userAccount = await adoDotNetFroUser.GetUserDetail(LoginModel.UserName);
+        var userAccount = await adoDotNetFroUser.GetUserDetail(LoginModel.UserName);
 
         if (userAccount == null || userAccount.Password != LoginModel.Password)
         {
@@ -71,7 +69,10 @@
         };
 
         // add policy claims
-        var userAccountPolicies = dbContext.UserAccountPolicies.Where(p => p.UserAccountId == userAccount.Id && p.IsEnabled).ToList();
+        //var userAccountPolicies = dbContext.UserAccountPolicies.Where(p => p.UserAccountId == userAccount.Id && p.IsEnabled).ToList();
+
+        var userAccountPolicies = await adoDotNetFroUser.GetuserAccountPolicies(userAccount.Id);
+
 
         foreach (var policy in userAccountPolicies)
         {

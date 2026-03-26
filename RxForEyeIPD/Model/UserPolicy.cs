@@ -1,4 +1,4 @@
-﻿namespace RxForEyeIPD
+﻿namespace RxForEyeIPD.Model
 {
     public class UserPolicy
     {
