@@ -40,6 +40,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.BaseHospital.CsScript
     public class BaseHospitalRepository : IBaseHospital
     {
         private readonly string _ConStrRxForEyeIPD;
+
         public BaseHospitalRepository(IConfiguration config)
         {
             _ConStrRxForEyeIPD = config.GetConnectionString("ConStrRxForEyeIPD")
