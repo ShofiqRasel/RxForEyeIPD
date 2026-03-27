@@ -11,10 +11,10 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
             public int UserId { get; set; }
             public int UserRoleId { get; set; }
             [Required(ErrorMessage = "User name is required.")]
-            [StringLength(20, MinimumLength = 3, ErrorMessage = "VA RE must be at least 3 characters.")]
             public string? UserName { get; set; }
+
             [Required(ErrorMessage = "Email is required.")]
-            [StringLength(20, MinimumLength = 10, ErrorMessage = "VA RE must be at least 10 characters.")]
+            [StringLength(100, MinimumLength = 11, ErrorMessage = "Email must be at least 10 characters.")]
             public string? UserEmail { get; set; }
             public byte[]? UserImage { get; set; }
             public string ImagePreviewUrl { get; set; } = "Images/MiscImage/default-avatar.png";
@@ -24,6 +24,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
             public string? Manufacturer { get; set; }
             public string? IpAddress { get; set; }
             public int? LockHours { get; set; } 
+            public DateTime LockUpTo { get; set; } // Property to track lock expiration
             public bool? RememberMe { get; set; }
             public int CreatedBy { get; set; }
             public int UpdatedBy { get; set; }
@@ -179,7 +180,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                 cmd.Parameters.Add("@ScreenSize", SqlDbType.VarChar).Value = PassUsers.ScreenSize ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@Manufacturer", SqlDbType.VarChar).Value = PassUsers.Manufacturer ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@IpAddress", SqlDbType.VarChar).Value = PassUsers.IpAddress ?? (object)DBNull.Value;
-                cmd.Parameters.Add("@LockHours", SqlDbType.Int).Value = PassUsers.LockHours ?? (object)DBNull.Value;
+                //cmd.Parameters.Add("@LockHours", SqlDbType.Int).Value = PassUsers.LockHours ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@RememberMe", SqlDbType.Bit).Value = PassUsers.RememberMe ?? (object)DBNull.Value; 
                 cmd.Parameters.AddWithValue("@CreatedBy", PassUsers.CreatedBy);
                 await con.OpenAsync();
@@ -208,7 +209,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                 cmd.Parameters.Add("@ScreenSize", SqlDbType.VarChar).Value = PassUsers.ScreenSize ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@Manufacturer", SqlDbType.VarChar).Value = PassUsers.Manufacturer ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@IpAddress", SqlDbType.VarChar).Value = PassUsers.IpAddress ?? (object)DBNull.Value;
-                cmd.Parameters.Add("@LockHours", SqlDbType.Int).Value = PassUsers.LockHours;
+                //cmd.Parameters.Add("@LockHours", SqlDbType.Int).Value = PassUsers.LockHours;
                 cmd.Parameters.Add("@RememberMe", SqlDbType.Bit).Value = PassUsers.RememberMe;
                 cmd.Parameters.AddWithValue("@UpdatedBy", PassUsers.UpdatedBy);
                 await con.OpenAsync();

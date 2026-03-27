@@ -27,6 +27,7 @@ builder.Services.AddAuthorization(options =>
     }
 });
 
+builder.Services.AddHttpContextAccessor();
 
 //Example Code Block: Define a policy named "ManagementOnly" that requires EITHER Admin OR Manager OR CEO
 //builder.Services.AddAuthorization(options =>
@@ -50,7 +51,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
         options.AccessDeniedPath = "/access-denied";
         options.Cookie.HttpOnly = true; //prevent client-side scripts (javascript) from accessing the cookie
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //ensure the cookie is only sent over HTTPS
+        //options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //ensure the cookie is only sent over HTTPS
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; //allow the cookie to be sent over HTTP during development, but require HTTPS in production
     });
 
 builder.Services.AddCascadingAuthenticationState();

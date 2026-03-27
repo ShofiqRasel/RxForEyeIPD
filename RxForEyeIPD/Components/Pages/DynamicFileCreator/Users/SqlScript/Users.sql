@@ -12,7 +12,8 @@ Create Table Users
         ScreenSize varchar (20) Null , 
         Manufacturer varchar (30) Null , 
         IpAddress varchar (20) Null , 
-        LockHours int Null,
+        LockHours int Null default 0,
+        LockUpTo DateTime null,
         RememberMe bit Null,
         CreatedBy Int   Not Null , 
         UpdatedBy Int   Null , 
@@ -29,17 +30,17 @@ if object_id ('ProcInsertUsers') is not null
 drop Proc ProcInsertUsers 
 Go 
 Create Proc ProcInsertUsers 
-        @UserRoleId Int  , 
+        @UserRoleId Int , 
         @UserName nvarchar (20), 
         @UserEmail varchar (100), 
-        @UserImage varbinary (max), 
+        @UserImage varbinary (max) = null, 
         @UserPassword varchar (max), 
-        @DeviceName varchar (30), 
-        @ScreenSize varchar (20), 
-        @Manufacturer varchar (30), 
-        @IpAddress varchar (20), 
-        @LockHours int,
-        @RememberMe bit,
+        @DeviceName varchar (30) = null, 
+        @ScreenSize varchar (20) = null, 
+        @Manufacturer varchar (30) = null, 
+        @IpAddress varchar (20) = null, 
+        --@LockHours int,
+        @RememberMe bit = null,
         @CreatedBy Int 
 As 
 Begin 
@@ -55,7 +56,7 @@ Begin
                ScreenSize, 
                Manufacturer, 
                IpAddress, 
-               LockHours,
+               --LockHours,
 			   RememberMe,
                 CreatedBy) 
         Values ( 
@@ -68,7 +69,7 @@ Begin
                 @ScreenSize, 
                 @Manufacturer, 
                 @IpAddress, 
-                @LockHours,
+                --@LockHours,
 			    @RememberMe,
                 @CreatedBy) 
                 
@@ -85,6 +86,11 @@ Begin
 End 
 Go 
 
+-- Creating a super admin user for running the application. Don't forget to delete this user after creating first super user for that organization. Otherwise anyone can hack this db using this default user id and pass
+declare @HashPass varchar(200) = (select '$2a$12$kDZghhxi6eeYC97JoZwbX.wKmSSBvFDVQ3PBq6AdbP6y4s8btTObG')
+exec ProcInsertUsers 1, N'Super Admin', 'superadmin@gmail.com', null, @HashPass, null, null, null, null, null, 1
+go
+-- Creating a super admin user for running the application. Don't forget to delete this user after creating first super user for that organization. Otherwise anyone can hack this db using this default user id and pass
 
 if object_id ('ProcUpdateUsers') is not null  
 drop Proc ProcUpdateUsers 
@@ -100,12 +106,12 @@ Create Proc ProcUpdateUsers
         @ScreenSize VarChar (20), 
         @Manufacturer VarChar (30), 
         @IpAddress VarChar (20), 
-        @LockHours int,
+        --@LockHours int,
 	    @RememberMe bit,
         @UpdatedBy Int 
 As 
 Begin 
-        Update Users set  UserRoleId = @UserRoleId, UserName = @UserName, UserEmail = @UserEmail, UserImage = @UserImage, UserPassword = @UserPassword, DeviceName = @DeviceName, ScreenSize = @ScreenSize, Manufacturer = @Manufacturer, IpAddress = @IpAddress, LockHours = @LockHours, RememberMe = @RememberMe, UpdatedBy = @UpdatedBy where UserId = @UserId 
+        Update Users set  UserRoleId = @UserRoleId, UserName = @UserName, UserEmail = @UserEmail, UserImage = @UserImage, UserPassword = @UserPassword, DeviceName = @DeviceName, ScreenSize = @ScreenSize, Manufacturer = @Manufacturer, IpAddress = @IpAddress, /*LockHours = @LockHours,*/ RememberMe = @RememberMe, UpdatedBy = @UpdatedBy where UserId = @UserId 
 End 
 Go 
 if object_id ('ProcDeleteUsers') is not null  

@@ -6,6 +6,8 @@
 @inject IUsers users
 @inject IUserRole userRole
 @inject NavigationManager Nav
+@inject IHttpContextAccessor HttpContextAccessor
+
 <PageTitle>Users</PageTitle>
 <h6>@(IsEditMode ? "Edit Users" : "Add Users")</h6>
 <EditForm Model="usersEntity" OnValidSubmit="HandleSubmit" FormName="saveUser">
@@ -56,11 +58,12 @@
                         <SfTextBox @bind-Value="usersEntity.IpAddress" class="form-control" />
                         <ValidationMessage For="@(() => usersEntity.IpAddress)" />
                     </div>
-                    <div class="mb-2">
+                    @* <div class="mb-2">
                         <label>LockHours</label>
                         <SfNumericTextBox @bind-Value="usersEntity.LockHours" class="form-control" />
                         <ValidationMessage For="@(() => usersEntity.LockHours)" />
-                    </div><div class="mb-2">
+                    </div> *@
+                    <div class="mb-2">
                         <label>RememberMe</label>
                         @* <SfCheckBox Label="Is Active" @bind-Checked="usersEntity.RememberMe"></SfCheckBox> *@
                         <SfSwitch @bind-Checked="usersEntity.RememberMe"></SfSwitch>
@@ -102,6 +105,9 @@
     private bool IsEditMode = false;
     protected override async Task OnInitializedAsync()
     {
+        var ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        usersEntity.IpAddress = ip ?? "";
+
         userRoleEntity = await userRole.GetAllUserRole(); // add this line to OnInitilizeAsync
         if (Id != null && Id > 0)
         {

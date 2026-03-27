@@ -8,7 +8,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = UserPolicy.ViewPermission)]
-
+ 
 <PageTitle>BaseHospital</PageTitle>
 
 <EditForm Model="baseHospitalEntity" OnValidSubmit="HandleSubmit" FormName="BaseHospitalForm">
@@ -101,6 +101,8 @@
         // var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         // var userId = authState.User.GetUserId();
         // baseHospitalEntity.CreatedBy = userId ?? 0;
+        
+        
 
         if (Id != null && Id > 0)
         {
