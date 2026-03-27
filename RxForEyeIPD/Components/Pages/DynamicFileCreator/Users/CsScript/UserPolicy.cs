@@ -2,20 +2,20 @@
 {
     public class UserPolicy
     {
-        public const string VIEW_PRODUCT = "VIEW_PRODUCT";
-        public const string ADD_PRODUCT = "ADD_PRODUCT";
-        public const string EDIT_PRODUCT = "EDIT_PRODUCT";
-        public const string DELETE_PRODUCT = "DELETE_PRODUCT";
+        public const string ViewPermission = "ViewPermission";
+        public const string AddPermission = "AddPermission";
+        public const string EditPermission = "EditPermission";
+        public const string DeletePermission = "DeletePermission";
    
 
     public static List<string> GetPolicies()
         {
             return new List<string>
             {
-                VIEW_PRODUCT,
-                ADD_PRODUCT,
-                EDIT_PRODUCT,
-                DELETE_PRODUCT
+                ViewPermission,
+                AddPermission,
+                EditPermission,
+                DeletePermission
             };
 
         }

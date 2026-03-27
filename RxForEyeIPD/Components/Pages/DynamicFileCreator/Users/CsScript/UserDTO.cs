@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.ComponentModel.DataAnnotations;
 
-namespace RxForEyeIPD.Services
+namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 {
     public class UserAccountPolicy
     {
@@ -109,6 +109,7 @@ namespace RxForEyeIPD.Services
                 return null;
             }
         }
+        
         public async Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId)
         {
             var policies = new List<UserAccountPolicy>();

@@ -23,6 +23,8 @@ Create Table Users
         IsActive char (3) Not Null Default 'Yes' 
 ) 
 go 
+
+
 if object_id ('ProcInsertUsers') is not null  
 drop Proc ProcInsertUsers 
 Go 
@@ -73,10 +75,10 @@ Begin
             -- Assign User Policy for The User Inserted
             declare @UsrId int = (select UserId from Users where UserEmail = @UserEmail) 
                
-			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'VIEW_PRODUCT', 0)
-			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'ADD_PRODUCT', 0)
-			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'EDIT_PRODUCT', 0)
-			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'DELETE_PRODUCT', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'ViewPermission', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'AddPermission', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'EditPermission', 0)
+			insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (@UsrId, 'DeletePermission', 0)
             -- Assign User Policy for The User Inserted
                 
     End -- if not exists end 
@@ -165,10 +167,10 @@ DeletedAt	DateTime   Null ,
 IsActive	char (3) Not Null Default 'Yes'
 )
 
-insert into UserPolicy (PolicyName, CreatedBy) values ('VIEW_PRODUCT', 1)
-insert into UserPolicy (PolicyName, CreatedBy) values ('EDIT_PRODUCT', 1)
-insert into UserPolicy (PolicyName, CreatedBy) values ('ADD_PRODUCT', 1)
-insert into UserPolicy (PolicyName, CreatedBy) values ('DELETE_PRODUCT', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('ViewPermission', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('EditPermission', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('AddPermission', 1)
+insert into UserPolicy (PolicyName, CreatedBy) values ('DeletePermission', 1)
 go
 
 
@@ -185,14 +187,14 @@ IsEnabled bit NOT NULL
 )
 GO
 
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'VIEW_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'ADD_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'EDIT_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'DELETE_PRODUCT', 1)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'VIEW_PRODUCT', 0)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'ADD_PRODUCT', 0)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'EDIT_PRODUCT', 0)
-insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DELETE_PRODUCT', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'ViewPermission', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'AddPermission', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'EditPermission', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (1, 'DeletePermission', 1)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'ViewPermission', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'AddPermission', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'EditPermission', 0)
+insert into UserAccountPolicy (UserId, AssingnUserPolicy, IsEnabled) values (2, 'DeletePermission', 0)
 go
 
 

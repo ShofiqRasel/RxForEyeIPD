@@ -5,7 +5,7 @@
 @rendermode InteractiveServer
 @inject IUsers UsersService
 @inject NavigationManager Nav
-<AuthorizeView Policy="@UserPolicy.VIEW_PRODUCT"/>
+<AuthorizeView Policy="@UserPolicy.ViewPermission"/>
 
 <PageTitle>List of Users</PageTitle>
 <h3>List of Users</h3>

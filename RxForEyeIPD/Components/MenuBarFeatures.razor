@@ -1,14 +1,8 @@
 ﻿@page "/menubar-features"
 @using Microsoft.AspNetCore.Components.Authorization
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
-@using RxForEyeIPD.Model
-@using Syncfusion.Blazor.Buttons
-@using Syncfusion.Blazor.Navigations
-@using Syncfusion.Blazor.SplitButtons
 @using System.Security.Claims
 @rendermode InteractiveServer
-
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <!-- Brand -->
@@ -23,7 +17,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <!-- ms-auto pushes everything to the right -->
-                <AuthorizeView Policy="@UserPolicy.VIEW_PRODUCT">
+                <AuthorizeView Policy="@UserPolicy.ViewPermission">
                 @* <AuthorizeView Roles="Admin"> *@
                     <Authorized>
                         <!-- Patient -->

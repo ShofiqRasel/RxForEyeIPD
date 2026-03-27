@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -11,11 +12,26 @@
 
     <main>
         <div class="top-row px-4">
-            <AuthorizeView>
+            <AuthorizeView Context="authUser">
                 <Authorized>
-                    <span>Hello, @context.User.Identity?.Name!</span>
+                    <span>Hello, @authUser.User.Identity?.Name!</span>
+
+                    <!-- Nested AuthorizeView with DIFFERENT context -->
+                    <AuthorizeView Roles="Admin,Super Admin" Context="adminUser">
+                        <Authorized>
+                            <button class="btn btn-warning">Admin Panel</button>
+                        </Authorized>
+                    </AuthorizeView>
+
+                    <AuthorizeView Roles="Doctor" Context="docUser">
+                        <Authorized>
+                            <button class="btn btn-info">Doctor Dashboard</button>
+                        </Authorized>
+                    </AuthorizeView>
+
                     <a href="/logout">Logout</a>
                 </Authorized>
+
                 <NotAuthorized>
                     <a href="/login">Login</a>
                 </NotAuthorized>

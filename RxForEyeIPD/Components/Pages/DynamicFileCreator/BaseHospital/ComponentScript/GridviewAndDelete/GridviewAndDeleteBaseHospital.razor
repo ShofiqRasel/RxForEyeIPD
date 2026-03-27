@@ -7,14 +7,18 @@
 <PageTitle>List of BaseHospital</PageTitle>
 <h3>List of BaseHospital</h3>
 <div class="container-fluid">
-    <div class="row pb-2">
-        <div class="col-12 text-end">
-            @* Set your href manually according to your need. *@ 
+    <AuthorizeView Roles="Super Admin, Admin">
+        <Authorized>
+            <div class="row pb-2">
+                <div class="col-12 text-end">
+                    @* Set your href manually according to your need. *@ 
         <a class="btn btn-sm btn-primary" href="/basehospital">
-                New Entry
-            </a>
-        </div>
-    </div>
+                        New Entry
+                    </a>
+                </div>
+            </div>
+        </Authorized>
+    </AuthorizeView>
     <div class="row pb-2">
         @if (BaseHospitals == null || BaseHospitals.Count == 0)
         {
@@ -99,7 +103,7 @@
         BaseHospitalEntity.BaseHospitalId = id;
         BaseHospitalEntity.DeletedBy = 1; // Set the deletedBy property as needed
         isSuccess = await BaseHospitalService.DeleteBaseHospital(BaseHospitalEntity);
-        if (isSuccess>0)
+        if (isSuccess > 0)
         {
             BaseHospitals = await BaseHospitalService.GetAllBaseHospital();
             StateHasChanged();
@@ -108,7 +112,7 @@
         {
             // Optionally show an error message
         }
-             
+
     }
 
     public string ConvertToImage(byte[] imageBytes)
