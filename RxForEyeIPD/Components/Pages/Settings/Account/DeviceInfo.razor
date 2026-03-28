@@ -1,0 +1,106 @@
+﻿@page "/device-info"
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<h3>Device Information</h3>
+
+@if (deviceData != null)
+{
+    <table class="table table-bordered">
+        <tr>
+            <th>Estimated Device</th>
+            <td>@deviceData.getDeviceInfo()</td>
+        </tr>
+        <tr>
+            <th>Screen Size</th>
+            <td>@deviceData.ScreenWidth x @deviceData.ScreenHeight</td>
+        </tr>
+        <tr>
+            <th>User Agent</th>
+            <td>@deviceData.UserAgent</td>
+        </tr>
+    </table>
+}
+else
+{
+    <p>Detecting device...</p>
+}
+
+@code {
+    // Changed variable name to avoid confusion
+    private DeviceDataModel? deviceData;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Give the browser a tiny moment to ensure JS is ready
+                await Task.Delay(100);
+                deviceData = await JS.InvokeAsync<DeviceDataModel>("getDeviceInfo");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         // Ensure the JS function name matches what's in your index.html/App.razor
+    //         try
+    //         {
+    //             deviceData = await JS.InvokeAsync<DeviceDataModel>("getDeviceInfo");
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             Console.WriteLine($"JS Error: {ex.Message}");
+    //         }
+    //         StateHasChanged();
+    //     }
+    // }
+
+    // Renamed the class to DeviceDataModel
+    public class DeviceDataModel
+    {
+        public string UserAgent { get; set; } = string.Empty;
+        public int ScreenWidth { get; set; }
+        public int ScreenHeight { get; set; }
+        public double DeviceMemory { get; set; }
+        public string Language { get; set; } = string.Empty;
+
+        public string getDeviceInfo()
+        {
+            var ua = UserAgent.ToLower();
+
+            if (ua.Contains("android")) return "Android Device";
+            if (ua.Contains("iphone")) return "iPhone";
+            if (ua.Contains("ipad")) return "iPad";
+            if (ua.Contains("windows")) return "Windows PC";
+            if (ua.Contains("mac")) return "Mac";
+            if (ua.Contains("linux")) return "Linux";
+
+            return "Unknown Device";
+        }
+    }
+}
+
+
+@* @rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<button @onclick="TriggerAlert">Click Me</button>
+
+@code {
+    private async Task TriggerAlert()
+    {
+        // "showAlert" matches the name assigned to window.showAlert
+        await JS.InvokeVoidAsync("showAlert", "Hello from Blazor!");
+    }
+}
+ *@

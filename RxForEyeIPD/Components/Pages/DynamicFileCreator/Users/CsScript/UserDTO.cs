@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers;
 
 namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 {
@@ -29,13 +31,34 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please Enter User Name")]
         public string UserName { get; set; } = string.Empty;
         public string UserRole { get; set; } = string.Empty;
+        public DateTime? LockUpTo { get; set; } = DateTime.Now;
     }
+
+    //public class DeviceInfo
+    //{
+    //    public string UserAgent { get; set; } = string.Empty;
+    //    public int ScreenWidth { get; set; }
+    //    public int ScreenHeight { get; set; }
+    //    public double DeviceMemory { get; set; }
+    //    public string Language { get; set; } = string.Empty;
+
+    //    // Helper to guess the device name from UserAgent
+    //    public string GetDeviceName()
+    //    {
+    //        if (UserAgent.Contains("Android")) return "Android Device";
+    //        if (UserAgent.Contains("iPhone")) return "iPhone";
+    //        if (UserAgent.Contains("Windows")) return "Windows PC";
+    //        if (UserAgent.Contains("Macintosh")) return "Mac";
+    //        return "Unknown Device";
+    //    }
+    //}
 
     public interface IUserDTO
     {
         Task<List<string>> GetPoliciesAsync();
         Task<UserDTOEntity> GetUserDetail(string userName, string plainPassword);
         Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId);
+        Task<int> UpdateLockUpTo(UsersEntity PassUsers);
     }
     public class srvUserDTO(IConfiguration Configuration): IUserDTO
     {
@@ -72,7 +95,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
                     ?? throw new InvalidOperationException("Connection string not found.");
 
                 string query = @"
-        SELECT u.UserId, u.UserName, u.UserPassword, ur.UserRoleName 
+        SELECT u.UserId, u.UserName, u.UserPassword, ur.UserRoleName, u.LockUpTo 
         FROM Users u
         INNER JOIN UserRole ur ON u.UserRoleId = ur.UserRoleId
         WHERE u.UserName = @userName AND u.IsActive = 'Yes'";
@@ -91,6 +114,14 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
                     // ✅ verify password
                     if (!BCrypt.Net.BCrypt.Verify(plainPassword, storedHash))
                         return null;
+
+                    DateTime? lockUpTo = dr["LockUpTo"] as DateTime?;
+                    // Block the user ONLY if the lock time is still active (in the future)
+                    if (lockUpTo != null && lockUpTo > DateTime.Now)
+                    {
+                        // You might want to log this or throw a specific exception like "Account Locked"
+                        return null;
+                    }
 
                     // ✅ return valid user
                     return new UserDTOEntity
@@ -141,6 +172,22 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
                 Console.WriteLine($"Error loading prescriptions: {ex.Message}");
             }
             return policies;
+        }
+
+        public async Task<int> UpdateLockUpTo(UsersEntity PassUsers)
+        {
+            string connectionString = Configuration.GetConnectionString("ConStrRxForEyeIPD")
+                ?? throw new InvalidOperationException("Connection string not found.");
+
+            using var con = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand("ProcLockTimeUpto", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = PassUsers.LockUpTo;
+            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PassUsers.UserId;
+            await con.OpenAsync();
+            return await cmd.ExecuteNonQueryAsync();
         }
     }
 }

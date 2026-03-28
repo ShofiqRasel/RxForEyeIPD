@@ -48,7 +48,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.Name = "auth_token";
         options.LoginPath = "/login";
-        options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+        options.Cookie.MaxAge = TimeSpan.FromDays(1);
         options.AccessDeniedPath = "/access-denied";
         options.Cookie.HttpOnly = true; //prevent client-side scripts (javascript) from accessing the cookie
         //options.Cookie.SecurePolicy = CookieSecurePolicy.Always; //ensure the cookie is only sent over HTTPS

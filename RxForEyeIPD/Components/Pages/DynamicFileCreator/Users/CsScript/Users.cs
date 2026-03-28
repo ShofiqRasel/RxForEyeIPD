@@ -23,8 +23,8 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
             public string? ScreenSize { get; set; }
             public string? Manufacturer { get; set; }
             public string? IpAddress { get; set; }
-            public int? LockHours { get; set; } 
-            public DateTime LockUpTo { get; set; } // Property to track lock expiration
+            public int? LockHours { get; set; }
+            public DateTime? LockUpTo { get; set; } = DateTime.Now; // Property to track lock expiration
             public bool? RememberMe { get; set; }
             public int CreatedBy { get; set; }
             public int UpdatedBy { get; set; }

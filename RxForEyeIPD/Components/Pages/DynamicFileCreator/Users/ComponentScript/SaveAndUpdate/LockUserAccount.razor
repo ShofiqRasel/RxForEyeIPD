@@ -1,0 +1,94 @@
+﻿@page "/lockuser"
+@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@inject IUserDTO userDTO
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<PageTitle>Lock User Account</PageTitle>
+
+<div class="row align-items-end">
+    <div class="col-md-7">
+        <h5 class="text-black-50">Lock User Account</h5>
+    </div>
+    <div class="col-md-2">
+        @if (@ErrorMessage != string.Empty)
+        {
+            <div class="@alertClass" role="alert">
+                @ErrorMessage
+            </div>
+        }
+        <label class="form-label mt-2">Starting Date</label>
+        @* Manual binding to avoid EventCallback conversion errors *@
+        <SfDateTimePicker TValue="DateTime ?"
+                          @bind-Value="userEntity.LockUpTo"
+                          Format="dd/MM/yyyy hh:mm tt"
+                          Placeholder="Select date and time">
+        </SfDateTimePicker>
+    </div>
+    <div class="col-md-1">
+        <SfButton CssClass="e-primary mt-4" OnClick="OnSubmitClick">Lock My Accout Upto This Time</SfButton>
+    </div>
+</div>
+
+@code {
+    string alertClass = "alert alert-danger";
+    private string ErrorMessage { get; set; } = string.Empty;
+    private bool VisibleProperty { get; set; } = false;
+    private UsersEntity userEntity = new();
+
+    private async Task OnSubmitClick()
+    {
+        // 1. Reset error message
+        ErrorMessage = string.Empty;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            // Extract the ID from claims (Ensure GetUserId() extension is working)
+            userEntity.UserId = user.GetUserId() ?? 0;
+            userEntity.UpdatedBy = userEntity.UserId;
+        }
+
+        if (userEntity.UserId == 0)
+        {
+            ErrorMessage = "User session not found. Please re-login.";
+            return;
+        }
+
+        // 2. Check if dates are selected (Null Check)
+        if (userEntity.LockUpTo <= DateTime.Now)
+        {
+            ErrorMessage = "The lock date must be in the future.";
+            return;
+        }
+
+        int IsSuccess = await userDTO.UpdateLockUpTo(userEntity);
+        if (IsSuccess > 0)
+        {
+            ErrorMessage = "Your Account has been locked up to " + userEntity.LockUpTo.ToString();
+            alertClass = "alert alert-success";
+            VisibleProperty = true;
+
+            // 1. Force the UI to show the success message immediately
+            StateHasChanged();
+
+            // 2. Wait for 2 seconds
+            await Task.Delay(2000);
+
+            // 3. Clear the message and hide the property
+            ErrorMessage = string.Empty;
+            VisibleProperty = false;
+
+            // 4. Force the UI to hide the message now that it's empty
+            StateHasChanged();
+        }
+        else
+        {
+            ErrorMessage = "Failed to lock the account. Please try again.";
+        }
+    }
+}
+

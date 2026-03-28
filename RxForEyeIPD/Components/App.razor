@@ -22,7 +22,9 @@
 <body>
     @* <Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" /> *@
     <Routes/>
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    @*  for getting device info and storing in local storage, which will be used for user session management and security purposes. You Must add this script before _framework/blazor.web.js *@
+    <script src="CustomJs/DeviceInfo.js" type="text/javascript"></script>
+    <script src="_framework/blazor.web.js"></script>
     <script src="@Assets["bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"]"></script>
     <script src="_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js"></script>
     <script src="@Assets["CustomJs/CustomJs.js"]"></script>

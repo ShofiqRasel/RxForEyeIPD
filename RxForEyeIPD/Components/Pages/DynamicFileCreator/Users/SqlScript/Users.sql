@@ -155,6 +155,18 @@ Begin
 End 
 Go 
 
+if object_id ('ProcLockTimeUpto') is not null  
+drop Proc ProcLockTimeUpto 
+Go 
+create proc ProcLockTimeUpto 
+    @LockUpTo datetime, 
+    @UserId INT
+AS 
+BEGIN 
+    update Users 
+    set LockUpTo = @LockUpTo, UpdatedBy = @UserId  
+    where UserId = @UserId AND IsActive = 'Yes'
+END
 
 if object_id ('UserPolicy') is not null
 drop table UserPolicy
