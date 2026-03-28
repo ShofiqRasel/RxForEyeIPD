@@ -8,7 +8,7 @@ Create Table Users
         UserEmail varchar (100) Not Null , 
         UserImage varbinary (max) Null , 
         UserPassword varchar (max) Not Null , 
-        DeviceName varchar (30) Null , 
+        DeviceId varchar (30) Null , 
         ScreenSize varchar (20) Null , 
         Manufacturer varchar (30) Null , 
         IpAddress varchar (20) Null , 
@@ -35,7 +35,7 @@ Create Proc ProcInsertUsers
         @UserEmail varchar (100), 
         @UserImage varbinary (max) = null, 
         @UserPassword varchar (max), 
-        @DeviceName varchar (30) = null, 
+        @DeviceId varchar (30) = null, 
         @ScreenSize varchar (20) = null, 
         @Manufacturer varchar (30) = null, 
         @IpAddress varchar (20) = null, 
@@ -52,7 +52,7 @@ Begin
                UserEmail, 
                UserImage, 
                UserPassword, 
-               DeviceName, 
+               DeviceId, 
                ScreenSize, 
                Manufacturer, 
                IpAddress, 
@@ -65,7 +65,7 @@ Begin
                 @UserEmail, 
                 @UserImage, 
                 @UserPassword, 
-                @DeviceName, 
+                @DeviceId, 
                 @ScreenSize, 
                 @Manufacturer, 
                 @IpAddress, 
@@ -102,7 +102,7 @@ Create Proc ProcUpdateUsers
         @UserEmail VarChar (100), 
         @UserImage VarBinary (max), 
         @UserPassword VarChar (max), 
-        @DeviceName VarChar (30), 
+        @DeviceId VarChar (30), 
         @ScreenSize VarChar (20), 
         @Manufacturer VarChar (30), 
         @IpAddress VarChar (20), 
@@ -111,7 +111,7 @@ Create Proc ProcUpdateUsers
         @UpdatedBy Int 
 As 
 Begin 
-        Update Users set  UserRoleId = @UserRoleId, UserName = @UserName, UserEmail = @UserEmail, UserImage = @UserImage, UserPassword = @UserPassword, DeviceName = @DeviceName, ScreenSize = @ScreenSize, Manufacturer = @Manufacturer, IpAddress = @IpAddress, /*LockHours = @LockHours,*/ RememberMe = @RememberMe, UpdatedBy = @UpdatedBy where UserId = @UserId 
+        Update Users set  UserRoleId = @UserRoleId, UserName = @UserName, UserEmail = @UserEmail, UserImage = @UserImage, UserPassword = @UserPassword, DeviceId = @DeviceId, ScreenSize = @ScreenSize, Manufacturer = @Manufacturer, IpAddress = @IpAddress, /*LockHours = @LockHours,*/ RememberMe = @RememberMe, UpdatedBy = @UpdatedBy where UserId = @UserId 
 End 
 Go 
 if object_id ('ProcDeleteUsers') is not null  
@@ -131,7 +131,7 @@ Go
 Create Proc ProcSelectAllUsers 
 As 
 Begin 
-        Select UserId,  UserRoleId,  UserName,  UserEmail,  UserImage,  UserPassword,  DeviceName,  ScreenSize,  Manufacturer,  IpAddress,  LockHours, RememberMe, CreatedBy,  UpdatedBy,  DeletedBy,  CreatedAt,  UpdatedAt,  DeletedAt,  IsActive from Users Where IsActive = 'Yes' 
+        Select UserId,  UserRoleId,  UserName,  UserEmail,  UserImage,  UserPassword,  DeviceId,  ScreenSize,  Manufacturer,  IpAddress,  LockHours, RememberMe, CreatedBy,  UpdatedBy,  DeletedBy,  CreatedAt,  UpdatedAt,  DeletedAt,  IsActive from Users Where IsActive = 'Yes' 
 End 
 Go 
 if object_id ('ProcSelectOneUsers') is not null  
@@ -141,7 +141,7 @@ Create Proc ProcSelectOneUsers
         @UserId Int   
 As 
 Begin 
-        Select UserId,  UserRoleId,  UserName,  UserEmail,  UserImage,  UserPassword,  DeviceName,  ScreenSize,  Manufacturer,  IpAddress, LockHours, RememberMe, CreatedBy,  UpdatedBy,  DeletedBy,  CreatedAt,  UpdatedAt,  DeletedAt,  IsActive from Users  where IsActive = 'Yes' and UserId = @UserId 
+        Select UserId,  UserRoleId,  UserName,  UserEmail,  UserImage,  UserPassword,  DeviceId,  ScreenSize,  Manufacturer,  IpAddress, LockHours, RememberMe, CreatedBy,  UpdatedBy,  DeletedBy,  CreatedAt,  UpdatedAt,  DeletedAt,  IsActive from Users  where IsActive = 'Yes' and UserId = @UserId 
 End 
 Go 
 if object_id ('ProcSelectUserssByUserRoleId') is not null  
@@ -165,8 +165,43 @@ AS
 BEGIN 
     update Users 
     set LockUpTo = @LockUpTo, UpdatedBy = @UserId  
-    where UserId = @UserId AND IsActive = 'Yes'
+    where UserId = @UserId 
 END
+go
+
+
+
+if object_id ('ProcDeviceInfo') is not null  
+drop Proc ProcDeviceInfo 
+Go 
+create proc ProcDeviceInfo 
+    @DeviceInfo varchar(30), 
+    @UserId INT
+AS 
+BEGIN 
+    update Users 
+    set DeviceId = @DeviceInfo, UpdatedBy = @UserId  
+    where UserId = @UserId
+END
+go
+
+
+
+if object_id ('ProcUpdateIpAddress') is not null  
+drop Proc ProcUpdateIpAddress 
+Go 
+create proc ProcUpdateIpAddress 
+    @DeviceIpAddress varchar(20), 
+    @UserId INT
+AS 
+BEGIN 
+    update Users 
+    set IpAddress = @DeviceIpAddress, UpdatedBy = @UserId  
+    where UserId = @UserId
+END
+go
+
+
 
 if object_id ('UserPolicy') is not null
 drop table UserPolicy

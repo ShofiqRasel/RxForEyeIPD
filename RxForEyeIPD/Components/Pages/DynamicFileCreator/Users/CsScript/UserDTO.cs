@@ -43,7 +43,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
     //    public string Language { get; set; } = string.Empty;
 
     //    // Helper to guess the device name from UserAgent
-    //    public string GetDeviceName()
+    //    public string GetDeviceId()
     //    {
     //        if (UserAgent.Contains("Android")) return "Android Device";
     //        if (UserAgent.Contains("iPhone")) return "iPhone";
@@ -59,6 +59,8 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
         Task<UserDTOEntity> GetUserDetail(string userName, string plainPassword);
         Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId);
         Task<int> UpdateLockUpTo(UsersEntity PassUsers);
+        Task DeviceInfo(string deviceInfo, int UserId);
+        Task DeviceIpAddress(string IpAddress, int UserId);
     }
     public class srvUserDTO(IConfiguration Configuration): IUserDTO
     {
@@ -188,6 +190,40 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PassUsers.UserId;
             await con.OpenAsync();
             return await cmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task DeviceInfo(string deviceInfo, int UserId)
+        {
+            string connectionString = Configuration.GetConnectionString("ConStrRxForEyeIPD")
+                ?? throw new InvalidOperationException("Connection string not found.");
+
+            using var con = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand("ProcDeviceInfo", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.Add("@DeviceInfo", SqlDbType.VarChar).Value = deviceInfo;
+            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+
+            await con.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task DeviceIpAddress(string IpAddress, int UserId)
+        {
+            string connectionString = Configuration.GetConnectionString("ConStrRxForEyeIPD")
+                ?? throw new InvalidOperationException("Connection string not found.");
+
+            using var con = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand("ProcUpdateIpAddress", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.Add("@DeviceIpAddress", SqlDbType.VarChar).Value = IpAddress;
+            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+
+            await con.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
             public byte[]? UserImage { get; set; }
             public string ImagePreviewUrl { get; set; } = "Images/MiscImage/default-avatar.png";
             public string? UserPassword { get; set; }
-            public string? DeviceName { get; set; }
+            public string? DeviceId { get; set; }
             public string? ScreenSize { get; set; }
             public string? Manufacturer { get; set; }
             public string? IpAddress { get; set; }
@@ -95,7 +95,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                                 UserEmail = Convert.ToString(dr["UserEmail"]),
                                 UserImage = dr["UserImage"] == DBNull.Value ? null : (byte[])dr["UserImage"],
                                 UserPassword = string.Empty, //UserPassword = dr["UserPassword"] == DBNull.Value ? null : Convert.ToString(dr["UserPassword"]),// dr["UserPassword"] == DBNull.Value ? null : (byte[])dr["UserPassword"],
-                                DeviceName = dr["DeviceName"] == DBNull.Value ? null : Convert.ToString(dr["DeviceName"]),
+                                DeviceId = dr["DeviceId"] == DBNull.Value ? null : Convert.ToString(dr["DeviceId"]),
                                 ScreenSize = dr["ScreenSize"] == DBNull.Value ? null : Convert.ToString(dr["ScreenSize"]),
                                 Manufacturer = dr["Manufacturer"] == DBNull.Value ? null : Convert.ToString(dr["Manufacturer"]),
                                 IpAddress = dr["IpAddress"] == DBNull.Value ? null : Convert.ToString(dr["IpAddress"]),
@@ -176,7 +176,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
 
                 cmd.Parameters.Add("@UserPassword", SqlDbType.VarChar).Value = hashedPassword;
                 //cmd.Parameters.Add("@UserPassword", SqlDbType.VarChar).Value = PassUsers.UserPassword;
-                cmd.Parameters.Add("@DeviceName", SqlDbType.VarChar).Value = PassUsers.DeviceName ?? (object) DBNull.Value;
+                cmd.Parameters.Add("@DeviceId", SqlDbType.VarChar).Value = PassUsers.DeviceId ?? (object) DBNull.Value;
                 cmd.Parameters.Add("@ScreenSize", SqlDbType.VarChar).Value = PassUsers.ScreenSize ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@Manufacturer", SqlDbType.VarChar).Value = PassUsers.Manufacturer ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@IpAddress", SqlDbType.VarChar).Value = PassUsers.IpAddress ?? (object)DBNull.Value;
@@ -205,7 +205,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                 cmd.Parameters.Add("@UserPassword", SqlDbType.VarChar).Value = hashedPassword;
                 //cmd.Parameters.Add("@UserPassword", SqlDbType.VarChar).Value = PassUsers.UserPassword ?? (object)DBNull.Value;
                 
-                cmd.Parameters.Add("@DeviceName", SqlDbType.VarChar).Value = PassUsers.DeviceName ?? (object)DBNull.Value;
+                cmd.Parameters.Add("@DeviceId", SqlDbType.VarChar).Value = PassUsers.DeviceId ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@ScreenSize", SqlDbType.VarChar).Value = PassUsers.ScreenSize ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@Manufacturer", SqlDbType.VarChar).Value = PassUsers.Manufacturer ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@IpAddress", SqlDbType.VarChar).Value = PassUsers.IpAddress ?? (object)DBNull.Value;
@@ -242,7 +242,7 @@ namespace RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users /*Change Th
                     // Keep it null/empty so the UI doesn't show the secret hash.
                     //UserPassword = string.Empty,
 
-                    DeviceName = dr["DeviceName"] == DBNull.Value ? null : Convert.ToString(dr["DeviceName"]),
+                    DeviceId = dr["DeviceId"] == DBNull.Value ? null : Convert.ToString(dr["DeviceId"]),
                     ScreenSize = dr["ScreenSize"] == DBNull.Value ? null : Convert.ToString(dr["ScreenSize"]),
                     Manufacturer = dr["Manufacturer"] == DBNull.Value ? null : Convert.ToString(dr["Manufacturer"]),
                     IpAddress = dr["IpAddress"] == DBNull.Value ? null : Convert.ToString(dr["IpAddress"]),

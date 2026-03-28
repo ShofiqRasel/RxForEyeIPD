@@ -1,8 +1,12 @@
 ﻿@page "/lockuser"
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using Syncfusion.Blazor.Buttons.Internal
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
 @inject IUserDTO userDTO
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JS
+
 @rendermode InteractiveServer
 
 <PageTitle>Lock User Account</PageTitle>
@@ -18,7 +22,7 @@
                 @ErrorMessage
             </div>
         }
-        <label class="form-label mt-2">Starting Date</label>
+        <label class="form-label mt-2">Lock Device Upto Date & Time</label>
         @* Manual binding to avoid EventCallback conversion errors *@
         <SfDateTimePicker TValue="DateTime ?"
                           @bind-Value="userEntity.LockUpTo"
@@ -30,12 +34,58 @@
         <SfButton CssClass="e-primary mt-4" OnClick="OnSubmitClick">Lock My Accout Upto This Time</SfButton>
     </div>
 </div>
+<div class="row align-items-end">
+    <div class="col-md-1">
+        <SfButton CssClass="e-primary mt-4" OnClick="OnPrimaryDeviceClick">Lock This Device as my Primary Device</SfButton>
+    </div>
+</div>
+<div class="row align-items-end">
+    <SfTextBox TValue="string?" @bind-Value="ipAddress" />
+    <div class="col-md-1">
+        <SfButton CssClass="e-primary mt-4" OnClick="OnSaveIpAddress">Lock This Device With This IP Address</SfButton>
+    </div>
+</div>
 
 @code {
     string alertClass = "alert alert-danger";
     private string ErrorMessage { get; set; } = string.Empty;
+    private string ipAddress { get; set; } = string.Empty;
     private bool VisibleProperty { get; set; } = false;
+    private string? ip { get; set; } = string.Empty;
     private UsersEntity userEntity = new();
+
+    private string? deviceData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        if (string.IsNullOrEmpty(ip))
+        {
+            ipAddress = "Unable to retrieve IP address.";
+        }
+        else
+        {
+            ipAddress = ip ?? "";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+                var userId = authState.User.GetUserId() ?? 0;
+                deviceData = userId.ToString() + await JS.InvokeAsync<string>("getDeviceInfo");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
 
     private async Task OnSubmitClick()
     {
@@ -90,5 +140,63 @@
             ErrorMessage = "Failed to lock the account. Please try again.";
         }
     }
-}
 
+    private async Task OnPrimaryDeviceClick()
+    {
+        ErrorMessage = string.Empty;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            // Extract the ID from claims (Ensure GetUserId() extension is working)
+            userEntity.UserId = user.GetUserId() ?? 0;
+            userEntity.UpdatedBy = userEntity.UserId;
+        }
+
+        if (userEntity.UserId == 0)
+        {
+            ErrorMessage = "User session not found. Please re-login.";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(deviceData))
+        {
+            ErrorMessage = "Device information could not be retrieved. Please try again.";
+            return;
+        }
+
+        await userDTO.DeviceInfo(deviceData, userEntity.UserId);
+
+        ErrorMessage = "This Device has been locked up as your primary device ";
+        alertClass = "alert alert-success";
+    }
+
+    private async Task OnSaveIpAddress()
+    {
+        ErrorMessage = string.Empty;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            // Extract the ID from claims (Ensure GetUserId() extension is working)
+            userEntity.UserId = user.GetUserId() ?? 0;
+            userEntity.UpdatedBy = userEntity.UserId;
+        }
+        if (userEntity.UserId == 0)
+        {
+            ErrorMessage = "User session not found. Please re-login.";
+            return;
+        }
+        if (string.IsNullOrEmpty(ip))
+        {
+            ErrorMessage = "IP address cannot be empty.";
+            return;
+        }
+
+        await userDTO.DeviceIpAddress(ip, userEntity.UserId);
+        ErrorMessage = "This Device has been locked up as your primary device with IP: " + ipAddress;
+        alertClass = "alert alert-success";
+    }
+}

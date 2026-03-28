@@ -38,10 +38,10 @@
                         <SfTextBox @bind-Value="usersEntity.UserPassword" class="form-control" />
                         <ValidationMessage For="@(() => usersEntity.UserPassword)" />
                     </div>
-                    <div class="mb-2">
-                        <label>DeviceName</label>
-                        <SfTextBox @bind-Value="usersEntity.DeviceName" class="form-control" />
-                        <ValidationMessage For="@(() => usersEntity.DeviceName)" />
+                    @* <div class="mb-2">
+                        <label>DeviceId</label>
+                        <SfTextBox @bind-Value="usersEntity.DeviceId" class="form-control" />
+                        <ValidationMessage For="@(() => usersEntity.DeviceId)" />
                     </div>
                     <div class="mb-2">
                         <label>ScreenSize</label>
@@ -58,17 +58,16 @@
                         <SfTextBox @bind-Value="usersEntity.IpAddress" class="form-control" />
                         <ValidationMessage For="@(() => usersEntity.IpAddress)" />
                     </div>
-                    @* <div class="mb-2">
+                   <div class="mb-2">
                         <label>LockHours</label>
                         <SfNumericTextBox @bind-Value="usersEntity.LockHours" class="form-control" />
                         <ValidationMessage For="@(() => usersEntity.LockHours)" />
-                    </div> *@
+                    </div> 
                     <div class="mb-2">
                         <label>RememberMe</label>
-                        @* <SfCheckBox Label="Is Active" @bind-Checked="usersEntity.RememberMe"></SfCheckBox> *@
                         <SfSwitch @bind-Checked="usersEntity.RememberMe"></SfSwitch>
                         <ValidationMessage For="@(() => usersEntity.RememberMe)" />
-                    </div>
+                    </div>*@
                 </div>
             </div>
 
@@ -103,6 +102,7 @@
     private UsersEntity usersEntity = new();
     private List<UserRoleEntity> userRoleEntity = new(); // List of Foreign Key Columns
     private bool IsEditMode = false;
+    
     protected override async Task OnInitializedAsync()
     {
         var ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
