@@ -159,10 +159,14 @@ if object_id ('ProcLockTimeUpto') is not null
 drop Proc ProcLockTimeUpto 
 Go 
 create proc ProcLockTimeUpto 
-    @LockUpTo datetime, 
+    @LockUpTo datetime = NULL, 
     @UserId INT
 AS 
 BEGIN 
+	if @LockUpTo is null
+		begin
+			set @LockUpTo = NULL
+		end
     update Users 
     set LockUpTo = @LockUpTo, UpdatedBy = @UserId  
     where UserId = @UserId 
@@ -175,10 +179,14 @@ if object_id ('ProcDeviceInfo') is not null
 drop Proc ProcDeviceInfo 
 Go 
 create proc ProcDeviceInfo 
-    @DeviceInfo varchar(30), 
+    @DeviceInfo varchar(30) = null, 
     @UserId INT
 AS 
 BEGIN 
+	if (@DeviceInfo = 'Null')
+		begin
+			set @DeviceInfo = NULL
+		end
     update Users 
     set DeviceId = @DeviceInfo, UpdatedBy = @UserId  
     where UserId = @UserId
@@ -191,10 +199,14 @@ if object_id ('ProcUpdateIpAddress') is not null
 drop Proc ProcUpdateIpAddress 
 Go 
 create proc ProcUpdateIpAddress 
-    @DeviceIpAddress varchar(20), 
+    @DeviceIpAddress varchar(20) = Null, 
     @UserId INT
 AS 
 BEGIN 
+if (@DeviceIpAddress = 'Null')
+		begin
+			set @DeviceIpAddress = NULL
+		end
     update Users 
     set IpAddress = @DeviceIpAddress, UpdatedBy = @UserId  
     where UserId = @UserId

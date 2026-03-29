@@ -34,29 +34,19 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
         public DateTime? LockUpTo { get; set; } = DateTime.Now;
     }
 
-    //public class DeviceInfo
-    //{
-    //    public string UserAgent { get; set; } = string.Empty;
-    //    public int ScreenWidth { get; set; }
-    //    public int ScreenHeight { get; set; }
-    //    public double DeviceMemory { get; set; }
-    //    public string Language { get; set; } = string.Empty;
+    public class  UserAccessStatus
+    {
+        public string? DeviceId { get; set; }
+        public string? IpAddress { get; set; }
+        public string? LockUpTo { get;set; }
+    }
 
-    //    // Helper to guess the device name from UserAgent
-    //    public string GetDeviceId()
-    //    {
-    //        if (UserAgent.Contains("Android")) return "Android Device";
-    //        if (UserAgent.Contains("iPhone")) return "iPhone";
-    //        if (UserAgent.Contains("Windows")) return "Windows PC";
-    //        if (UserAgent.Contains("Macintosh")) return "Mac";
-    //        return "Unknown Device";
-    //    }
-    //}
 
     public interface IUserDTO
     {
         Task<List<string>> GetPoliciesAsync();
         Task<UserDTOEntity> GetUserDetail(string userName, string plainPassword);
+        Task<UserAccessStatus> GetUserAccessStatus(int UserId);
         Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId);
         Task<int> UpdateLockUpTo(UsersEntity PassUsers);
         Task DeviceInfo(string deviceInfo, int UserId);
@@ -142,7 +132,43 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
                 return null;
             }
         }
-        
+
+        public async Task<UserAccessStatus?> GetUserAccessStatus(int UserId)
+        {
+            try
+            {
+                string connectionString = Configuration.GetConnectionString("ConStrRxForEyeIPD")
+                    ?? throw new InvalidOperationException("Connection string not found.");
+
+                string query = @"
+                select DeviceId, IpAddress, LockUpTo from Users where UserId = @UserId and IsActive = 'Yes'";
+
+                using SqlConnection con = new(connectionString);
+                using SqlCommand cmd = new(query, con);
+                cmd.Parameters.AddWithValue("@UserId", UserId);
+
+                await con.OpenAsync();
+                using SqlDataReader dr = await cmd.ExecuteReaderAsync();
+
+                if (await dr.ReadAsync())
+                {
+                    return new UserAccessStatus
+                    {
+                        DeviceId = dr["DeviceId"]?.ToString(),
+                        IpAddress = dr["IpAddress"]?.ToString() ?? "",
+                        LockUpTo = dr["LockUpTo"]?.ToString() ?? ""
+                    };
+                }
+
+                return null; // user not found
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId)
         {
             var policies = new List<UserAccountPolicy>();
@@ -186,7 +212,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
             {
                 CommandType = CommandType.StoredProcedure
             };
-            cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = PassUsers.LockUpTo;
+            cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = (object) PassUsers.LockUpTo ?? DBNull.Value;
             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PassUsers.UserId;
             await con.OpenAsync();
             return await cmd.ExecuteNonQueryAsync();
