@@ -1,0 +1,131 @@
+--powersheel script
+# Set your IP address here
+$targetIP = "192.168.192.57"
+
+Write-Host "Creating certificate for $targetIP..." -ForegroundColor Cyan
+
+# Create the certificate with the IP in the DnsName field (which populates the SAN)
+$cert = New-SelfSignedCertificate -DnsName $targetIP `
+    -CertStoreLocation "cert:\LocalMachine\My" `
+    -KeyUsage DigitalSignature,KeyEncipherment `
+    -Type SSLServerAuthentication `
+    -NotAfter (Get-Date).AddYears(5)
+
+# Move a copy to Trusted Roots so the browser trusts it
+Export-Certificate -Cert $cert -FilePath "$env:TEMP\ip_cert.cer" | Out-Null
+Import-Certificate -FilePath "$env:TEMP\ip_cert.cer" -CertStoreLocation "Cert:\LocalMachine\Root" | Out-Null
+Remove-Item "$env:TEMP\ip_cert.cer"
+
+Write-Host "Success! Now update your IIS binding to use this new certificate." -ForegroundColor Green
+--powershell script
+
+Critical Steps for IP Support
+Update IIS Binding: Go back to your site's Bindings in IIS Manager. Edit the HTTPS binding and select the new certificate that matches your IP address.
+IP Ownership: While self-signed certificates work fine for local testing, note that public Certificate Authorities (like Let's Encrypt) generally do not issue certificates for private/internal IP addresses (like 192.168.x.x).
+Firewall Check: If you plan to access this site from another computer on your network using that IP, you must ensure your Windows Firewall allows inbound traffic on Port 443. 
+DigiCert
+DigiCert
+ +3
+Note: If you use an IP, you cannot use Server Name Indication (SNI) in the IIS binding settings, as SNI is designed for domain names. 
+FairSSL
+FairSSL
+
+
+o allow other devices on your network to access your website via its IP address (192.168.192.57) over HTTPS, you must open Port 443 in the Windows Defender Firewall.
+Open Port 443 via PowerShell (Recommended)
+Run this command in PowerShell as Administrator to create a new inbound rule:
+
+--powershell code
+
+
+New-NetFirewallRule -DisplayName "Allow HTTPS (Port 443)" `
+    -Direction Inbound `
+    -LocalPort 443 `
+    -Protocol TCP `
+    -Action Allow `
+    -Description "Allows incoming HTTPS traffic for local web hosting."
+
+--powershell code
+
+
+To get rid of the "Not Secure" warning on other devices (like a second laptop or a phone) on your network, you need to export the certificate from your IIS server and manually install it as a "Trusted Root" on those devices.
+1. Export the Certificate (From the IIS Server)
+Run this PowerShell command on your server to save the certificate to your desktop:
+
+--powershell code
+$cert = Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object { $_.Subject -like "*192.168.192.57*" } | Select-Object -First 1
+Export-Certificate -Cert $cert -FilePath "$home\Desktop\MyNetworkCert.cer"
+Write-Host "Certificate exported to your Desktop as 'MyNetworkCert.cer'" -ForegroundColor Green
+
+
+--powershell code
+
+Alternatively, you can go to IIS Manager > Server Certificates, right-click your certificate, and choose Export.
+2. Install on Other Devices
+Move the MyNetworkCert.cer file to the other device (via USB, email, or network share) and follow these steps:
+For Windows (Laptops/PCs)
+Double-click the .cer file and click Install Certificate....
+Select Local Machine and click Next.
+Choose Place all certificates in the following store.
+Click Browse and select Trusted Root Certification Authorities.
+Click OK, Next, and Finish. Restart your browser.
+For Android/iOS
+iOS: Send the file via AirDrop or Email. Open it in Settings, go to Profile Downloaded, and install it. Then go to Settings > General > About > Certificate Trust Settings and toggle it ON.
+Android: Go to Settings > Security > More Security Settings > Encryption & credentials > Install a certificate > CA certificate. Select your file and install it.
+3. Final Verification
+Once installed, open your browser on the second device and go to:
+https://192.168.192.57
+The "Not Secure" warning should now be gone, and you should see a padlock icon.
+Note: If you change your server's IP address later, you will need to create a new certificate for the new IP and repeat these steps.
+Would you like to know how to set up a static IP address on your Windows server so it doesn't change and break your certificate?
+
+To ensure your certificate doesn't break, you need a Static IP address. If your router reassigns a different IP to your server (via DHCP), your certificate for 192.168.192.57 will become invalid.
+Method 1: Using PowerShell (Fastest)
+Run this as Administrator to lock your current IP settings.
+Warning: This script uses your existing connection details. Make sure you are currently connected to the network you want to use.
+
+--powershell code
+
+# 1. Get current network adapter details
+$adapter = Get-NetAdapter | Where-Object { $_.Status -eq "Up" } | Select-Object -First 1
+$ipDetails = Get-NetIPAddress -InterfaceAlias $adapter.Name -AddressFamily IPv4 | Select-Object -First 1
+$gateway = (Get-NetRoute -DestinationPrefix 0.0.0.0/0 -InterfaceAlias $adapter.Name).NextHop
+
+# 2. Set the Static IP (using your specific IP)
+Write-Host "Setting Static IP to 192.168.192.57 on $($adapter.Name)..." -ForegroundColor Cyan
+
+New-NetIPAddress -InterfaceAlias $adapter.Name `
+    -IPAddress "192.168.192.57" `
+    -PrefixLength 24 `
+    -DefaultGateway $gateway
+
+# 3. Set DNS (Using Google DNS as a reliable backup)
+Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ("8.8.8.8","8.8.4.4")
+
+Write-Host "Static IP successfully configured!" -ForegroundColor Green
+
+--powershell code
+
+Method 2: Using the GUI (Visual)
+If you prefer the standard Windows menus:
+Press Win + R, type ncpa.cpl, and hit Enter.
+Right-click your active network (Ethernet or Wi-Fi) and select Properties.
+Select Internet Protocol Version 4 (TCP/IPv4) and click Properties.
+Select Use the following IP address:
+IP address: 192.168.192.57
+Subnet mask: 255.255.255.0
+Default gateway: (Usually 192.168.192.1—check your router if unsure).
+Select Use the following DNS server addresses:
+Preferred: 8.8.8.8
+Alternate: 8.8.4.4
+Click OK and Close.
+Important: Router Reservation (Best Practice)
+Even with a static IP on your PC, your router might try to give 192.168.192.57 to another device (like a phone) while your server is offline, causing an IP Conflict.
+Log into your router's admin page (usually 192.168.192.1).
+Look for DHCP Reservations or Static Lease.
+Add your server's MAC Address and bind it to 192.168.192.57.
+Now that your IP is permanent, do you want to set up a URL Rewrite in IIS so users are automatically sent to the HTTPS version of your site?
+
+
+
+

@@ -230,18 +230,20 @@
             if (!string.IsNullOrEmpty(userAccessStatus.IpAddress))
             {
                 isIpAddressLocked = true;
+                ipAddress = userAccessStatus.IpAddress;
             }
-        }
-
-
-        ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-        if (string.IsNullOrEmpty(ip))
-        {
-            ipAddress = "Unable to retrieve IP address.";
-        }
-        else
-        {
-            ipAddress = ip ?? "";
+            else
+            {
+                ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                if (string.IsNullOrEmpty(ip))
+                {
+                    ipAddress = "Unable to retrieve IP address.";
+                }
+                else
+                {
+                    ipAddress = ip ?? "";
+                }
+            }
         }
         StateHasChanged();
     }

@@ -18,20 +18,26 @@ else
 @code {
     private string? deviceData;
 
+    // Inside your MainLayout.razor or a dedicated Service
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            try
+            if (firstRender)
             {
-                var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-                var userId = authState.User.GetUserId() ?? 0;
-                deviceData = userId.ToString() + await JS.InvokeAsync<string>("getDeviceInfo");
-                StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
+                try
+                {
+
+
+                    deviceData = await JS.InvokeAsync<string>("getDeviceInfo");
+
+
+                    StateHasChanged();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
         }
     }
