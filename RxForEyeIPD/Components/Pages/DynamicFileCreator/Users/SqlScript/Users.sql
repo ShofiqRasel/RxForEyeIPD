@@ -231,7 +231,7 @@ UpdatedAt	DateTime   Null ,
 DeletedAt	DateTime   Null , 
 IsActive	char (3) Not Null Default 'Yes'
 )
-
+go
 insert into UserPolicy (PolicyName, CreatedBy) values ('ViewPermission', 1)
 insert into UserPolicy (PolicyName, CreatedBy) values ('EditPermission', 1)
 insert into UserPolicy (PolicyName, CreatedBy) values ('AddPermission', 1)

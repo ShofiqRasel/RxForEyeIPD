@@ -1,5 +1,6 @@
 ﻿@page "/lockuser"
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using RxForEyeIPD.Components.Pages.Settings.Account
 @using Syncfusion.Blazor.Buttons.Internal
 @using Syncfusion.Blazor.Charts.Internal
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
@@ -20,7 +21,12 @@
     </div>
     }
 </div>
-<div class="card shadow-sm border-0 mb-4">
+<div class="row d-flex justify-content-center align-items-cente">
+    <div class="col-6">
+        <LockByDateAndTime />
+    </div>
+</div>
+@* <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white border-bottom-0 pt-3">
         <h5 class="text-secondary mb-0"><i class="oi oi-lock-locked me-2"></i>Security: Lock User Account</h5>
     </div>
@@ -58,7 +64,7 @@
         </div>
     </div>
 </div>
-
+ *@
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white border-bottom-0 pt-3">
         <h5 class="text-secondary mb-0"><i class="oi oi-lock-locked me-2"></i>Label Info</h5>
@@ -294,21 +300,14 @@
 
         if (args.Checked)
         {
-            int IsSuccess = await userDTO.UpdateLockUpTo(userEntity);
-            if (IsSuccess > 0)
-            {
+            await userDTO.UpdateLockUpTo(userEntity);
+            
                 ErrorMessage = "Account locked until " + userEntity.LockUpTo.ToString();
                 alertClass = "alert alert-success";
 
                 await Task.Delay(2000);
                 ErrorMessage = string.Empty;
                 StateHasChanged();
-            }
-            else
-            {
-                isDateTImeLocked = false; // Reset if DB update fails
-                ErrorMessage = "Failed to lock the account.";
-            }
         }
         else
         {

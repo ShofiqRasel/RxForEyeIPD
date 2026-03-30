@@ -1,0 +1,111 @@
+﻿@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using Syncfusion.Blazor.Buttons.Internal
+@using Syncfusion.Blazor.Charts.Internal
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@inject IUserDTO userDTO
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<div class="card text-center">
+    <div class="card-header">
+        Lock Device Upto Date & Time
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            <SfDateTimePicker TValue="DateTime?"
+                              @bind-Value="userEntity.LockUpTo"
+                              Format="dd/MM/yyyy hh:mm tt"
+                              Width="200px"
+                              Placeholder="Select date and time">
+            </SfDateTimePicker>
+        </p>
+        @if (DataAdded == false)
+        {
+            <button class="btn btn-primary" type="submit" @onclick="OnSaveTimeRestriction">
+                Set Time Restriction of My Account
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-danger" type="submit" @onclick="OnRemoveTimeRestriction">
+                Remove Time Restriction of My Account
+            </button>
+        }
+        
+    </div>
+    <div class="card-footer text-muted">
+        <span class="ms-3 small  fw-bold @(DataAdded ? "text-danger" : "text-success")">
+            @if (MessageOutput != string.Empty)
+            {
+                @MessageOutput
+            }
+        </span>
+    </div>
+</div>
+
+@code {
+    private bool DataAdded = false; // Track the switch state
+    //private SfSwitch<bool>? DateTImeLockSwitch; // Reference to the switch component
+
+    private string MessageOutput { get; set; } = string.Empty;
+    private UsersEntity userEntity = new();
+    private UserAccessStatus? userAccessStatus = new();
+    int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataAdded = false;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId = authState.User.GetUserId() ?? 0;
+        userAccessStatus = await userDTO.GetUserAccessStatus(userId);
+
+        if (!string.IsNullOrEmpty(userAccessStatus.LockUpTo))
+        {
+            DataAdded = true;
+        }
+        StateHasChanged();
+    }
+
+
+    private async Task OnSaveTimeRestriction()
+    {
+        MessageOutput = string.Empty;
+
+        if (userEntity.LockUpTo == null || userEntity.LockUpTo <= DateTime.Now)
+        {
+            MessageOutput = "Select a Date or Time Greater Than Current Date or Time";
+            DataAdded = false;
+            StateHasChanged();
+            return;
+        }
+
+        else
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            userEntity.UserId = user.GetUserId() ?? 0;
+
+
+            await userDTO.UpdateLockUpTo(userEntity);
+            MessageOutput = "Account locked until " + userEntity.LockUpTo.ToString();
+            DataAdded = true;
+            StateHasChanged();
+        }
+    }
+    private async Task OnRemoveTimeRestriction()
+    {
+        await userDTO.UpdateLockUpTo(new UsersEntity
+        {
+            UserId = userEntity.UserId,
+            LockUpTo = null
+        });
+        MessageOutput = "Account unlocked.";
+        DataAdded = false;
+        StateHasChanged();
+        await Task.Delay(2000);
+        MessageOutput = string.Empty;
+        
+    }
+}
+

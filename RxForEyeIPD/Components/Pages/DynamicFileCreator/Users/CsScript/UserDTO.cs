@@ -48,7 +48,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
         Task<UserDTOEntity> GetUserDetail(string userName, string plainPassword);
         Task<UserAccessStatus> GetUserAccessStatus(int UserId);
         Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId);
-        Task<int> UpdateLockUpTo(UsersEntity PassUsers);
+        Task UpdateLockUpTo(UsersEntity PassUsers);
         Task DeviceInfo(string deviceInfo, int UserId);
         Task DeviceIpAddress(string IpAddress, int UserId);
     }
@@ -202,7 +202,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
             return policies;
         }
 
-        public async Task<int> UpdateLockUpTo(UsersEntity PassUsers)
+        public async Task UpdateLockUpTo(UsersEntity PassUsers)
         {
             string connectionString = Configuration.GetConnectionString("ConStrRxForEyeIPD")
                 ?? throw new InvalidOperationException("Connection string not found.");
@@ -215,7 +215,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
             cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = (object) PassUsers.LockUpTo ?? DBNull.Value;
             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PassUsers.UserId;
             await con.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
 
         public async Task DeviceInfo(string deviceInfo, int UserId)
