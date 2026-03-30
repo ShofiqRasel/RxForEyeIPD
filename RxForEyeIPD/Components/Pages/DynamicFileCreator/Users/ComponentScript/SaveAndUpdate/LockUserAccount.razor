@@ -189,13 +189,13 @@
 
 </style>
 @code {
-    private bool isDateTImeLocked; // Track the switch state
+    private bool isDateTImeLocked = false; // Track the switch state
     private SfSwitch<bool> DateTImeLockSwitch; // Reference to the switch component
 
-    private bool isDeviceInfoLocked; // Track the switch state
+    private bool isDeviceInfoLocked = false; // Track the switch state
     private SfSwitch<bool> DeviceInfoLockSwitch;
 
-    private bool isIpAddressLocked; // Track the switch state
+    private bool isIpAddressLocked = false; // Track the switch state
     private SfSwitch<bool> IpAddressLockSwitch;
 
     string alertClass = "alert alert-danger";
@@ -231,9 +231,12 @@
             {
                 isIpAddressLocked = true;
                 ipAddress = userAccessStatus.IpAddress;
+                StateHasChanged();
             }
             else
             {
+                isIpAddressLocked = true;
+
                 ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(ip))
                 {
@@ -243,6 +246,7 @@
                 {
                     ipAddress = ip ?? "";
                 }
+                StateHasChanged();
             }
         }
         StateHasChanged();
@@ -254,10 +258,7 @@
         {
             try
             {
-
-
                 deviceData = userId.ToString() + await JS.InvokeAsync<string>("getDeviceInfo");
-
 
                 StateHasChanged();
             }
@@ -335,7 +336,6 @@
         }
         if (userEntity.UserId == 0)
         {
-            isIpAddressLocked = false;
             ErrorMessage = "User session not found. Please re-login.";
             return;
         }
