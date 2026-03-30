@@ -1,49 +1,51 @@
 @page "/userrole" 
 @page "/userrole/{Id:int}" 
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.UserRole.srvUserRole
-@inject IUserRole userrole 
-@inject NavigationManager Nav 
-<PageTitle>UserRole</PageTitle> 
-<h3>UserRole</h3> 
-<h3>@(IsEditMode ? "Edit UserRole" : "Add UserRole")</h3> 
-<EditForm Model="UserRoleEntity" OnValidSubmit="HandleSubmit"> 
-<DataAnnotationsValidator /> 
-<div class="mb-2"> 
-<label>UserRole</label> 
-<InputText @bind-Value="UserRoleEntity.UserRoleName" class="form-control" /> 
-<ValidationMessage For="@(() => UserRoleEntity.UserRoleName)" /> 
-</div> 
-<button class="btn btn-primary" type="submit"> 
-@(IsEditMode ? "Update" : "Save") 
-</button> 
-<a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/UserRole/ComponentScript/GridviewAndDelete/UserRole"> 
-Cancel 
-</a> 
-</EditForm> 
+@inject IUserRole userrole
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<PageTitle>UserRole</PageTitle>
+<h3>UserRole</h3>
+<h3>@(IsEditMode ? "Edit UserRole" : "Add UserRole")</h3>
+<EditForm Model="UserRoleEntity" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label>UserRole</label>
+        <InputText @bind-Value="UserRoleEntity.UserRoleName" class="form-control" />
+        <ValidationMessage For="@(() => UserRoleEntity.UserRoleName)" />
+    </div>
+    <button class="btn btn-primary" type="submit">
+        @(IsEditMode ? "Update" : "Save")
+    </button>
+    <a class="btn btn-secondary ms-2" href="/Settings/LocationMaster/UserRole/ComponentScript/GridviewAndDelete/UserRole">
+        Cancel
+    </a>
+</EditForm>
 @code {
-    [Parameter] public int? Id { get; set; } 
-    private UserRoleEntity UserRoleEntity = new(); 
-    private bool IsEditMode = false; 
-    protected override async Task OnInitializedAsync() 
-    { 
-        if (Id != null && Id > 0) 
-        { 
-            IsEditMode = true; 
-            UserRoleEntity = await userrole.GetUserRoleById(Id.Value); 
-        } 
-        else 
-        { 
-            UserRoleEntity = new UserRoleEntity(); 
-            UserRoleEntity.CreatedBy = 1; // set your user id 
-        } 
-    } 
-    private async Task HandleSubmit() 
+    [Parameter] public int? Id { get; set; }
+    private UserRoleEntity UserRoleEntity = new();
+    private bool IsEditMode = false;
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != null && Id > 0)
+        {
+            IsEditMode = true;
+            UserRoleEntity = await userrole.GetUserRoleById(Id.Value);
+        }
+        else
+        {
+            UserRoleEntity = new UserRoleEntity();
+            UserRoleEntity.CreatedBy = 1; // set your user id
+        }
+    }
+    private async Task HandleSubmit()
     {
         if (IsEditMode)
         {
             if (Id != null && Id > 0)
             {
-                UserRoleEntity.UpdatedBy = 1; // set current user ID 
+                UserRoleEntity.UpdatedBy = 1; // set current user ID
                 UserRoleEntity.UserRoleId = Id.Value;
                 await userrole.UpdateUserRole(UserRoleEntity);
                 Nav.NavigateTo($"/userrole");
@@ -54,6 +56,6 @@ Cancel
             UserRoleEntity.CreatedBy = 1;
             await userrole.CreateUserRole(UserRoleEntity);
             Nav.NavigateTo($"/userrole");
-        } 
-    } 
-} 
+        }
+    }
+}

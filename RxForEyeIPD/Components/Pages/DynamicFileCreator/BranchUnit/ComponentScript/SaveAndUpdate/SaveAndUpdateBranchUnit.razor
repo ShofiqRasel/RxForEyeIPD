@@ -6,6 +6,8 @@
 @inject IBranchUnit branchunit
 @inject IBaseHospital basehospital
 @inject NavigationManager Nav
+@rendermode InteractiveServer
+
 <PageTitle>BranchUnit</PageTitle>
 <h6>@(IsEditMode ? "Edit BranchUnit" : "Add BranchUnit")</h6>
 <EditForm Model="branchUnitEntity" OnValidSubmit="HandleSubmit" FormName="frmBranchUnit">
