@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using RxForEyeIPD.Components;
 using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript;
 using RxForEyeIPD.Extensions;
@@ -67,6 +68,13 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Configuration for Get IpAddress from Client
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+// Configuration for Get IpAddress from Client
 
 app.UseHttpsRedirection();
 

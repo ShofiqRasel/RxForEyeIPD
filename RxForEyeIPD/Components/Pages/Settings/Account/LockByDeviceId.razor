@@ -1,0 +1,112 @@
+﻿@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using Syncfusion.Blazor.Buttons.Internal
+@using Syncfusion.Blazor.Charts.Internal
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@inject IUserDTO userDTO
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<div class="card text-center">
+    <div class="card-header">
+        Lock User Account Using Device ID
+    </div>
+    <div class="card-body">
+        @if (DataAdded == false)
+        {
+            <button class="btn btn-primary" type="submit" @onclick="OnSaveDeviceId">
+                Set Device Identity To Protect My Account
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-danger" type="submit" @onclick="OnRemoveDeviceId">
+                Remove Device Identity To Protect My Account
+            </button>
+        }
+
+    </div>
+    <div class="card-footer text-muted">
+        <span class="ms-3 small  fw-bold @(DataAdded ? "text-danger" : "text-success")">
+            @if (MessageOutput != string.Empty)
+            {
+                @MessageOutput
+            }
+        </span>
+    </div>
+</div>
+
+@code {
+    private bool DataAdded = false; // Track the switch state
+    private string? deviceData;
+    private string MessageOutput { get; set; } = string.Empty;
+    private UsersEntity userEntity = new();
+    private UserAccessStatus? userAccessStatus = new();
+    int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataAdded = false;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId = authState.User.GetUserId() ?? 0;
+        userAccessStatus = await userDTO.GetUserAccessStatus(userId);
+
+        if (!string.IsNullOrEmpty(userAccessStatus.DeviceId))
+        {
+            DataAdded = true;
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                deviceData = await JS.InvokeAsync<string>("getDeviceInfo");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task OnSaveDeviceId()
+    {
+        MessageOutput = string.Empty;
+
+        if (string.IsNullOrEmpty(deviceData))
+        {
+            DataAdded = false;
+            MessageOutput = "Device information could not be retrieved.";
+            return;
+        }
+
+        if (deviceData != null)
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            userEntity.UserId = user.GetUserId() ?? 0;
+
+            await userDTO.DeviceInfo(deviceData, userId);
+
+            MessageOutput = "This device is now locked as your Primary Device.";
+            DataAdded = true;
+        }
+        StateHasChanged();
+    }
+    private async Task OnRemoveDeviceId()
+    {
+        deviceData = "NULL";
+        await userDTO.DeviceInfo(deviceData, userId);
+
+        MessageOutput = "This device has been removed as your primary device.";
+        DataAdded = false;
+        StateHasChanged();
+    }
+}
+

@@ -1,0 +1,133 @@
+﻿@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
+@using Syncfusion.Blazor.Buttons.Internal
+@using Syncfusion.Blazor.Charts.Internal
+@using System.Net
+@using System.Net.Sockets
+@using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
+@inject IUserDTO userDTO
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+
+@rendermode InteractiveServer
+
+<div class="card text-center">
+    <div class="card-header">
+        Lock Device Using Ip Address
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        {
+            <p class="card-text">
+                Your Account is Restricted with: @userAccessStatus.IpAddress Ip Address
+            </p>
+        }
+
+        <p class="card-text">
+            <SfTextBox TValue="string?" @bind-Value="ipAddress" />
+        </p>
+        @if (DataAdded == false)
+        {
+            <button class="btn btn-primary" type="submit" @onclick="OnSaveIpAddress">
+                Set Ip Address To Restriction of My Account
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-danger" type="submit" @onclick="OnRemoveIpAddress">
+                Remove Ip Address That Assign With My Account
+            </button>
+        }
+
+    </div>
+    <div class="card-footer text-muted">
+        <span class="ms-3 small  fw-bold @(DataAdded ? "text-danger" : "text-success")">
+            @if (MessageOutput != string.Empty)
+            {
+                @MessageOutput
+            }
+        </span>
+    </div>
+</div>
+
+@code {
+    private bool DataAdded = false; // Track the switch state
+    private string ipAddress { get; set; } = string.Empty;
+    private string MessageOutput { get; set; } = string.Empty;
+    private UsersEntity userEntity = new();
+    private string? ip { get; set; } = string.Empty;
+
+    private UserAccessStatus? userAccessStatus = new();
+    int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataAdded = false;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId = authState.User.GetUserId() ?? 0;
+        userAccessStatus = await userDTO.GetUserAccessStatus(userId);
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+
+        //ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+        var context = HttpContextAccessor.HttpContext;
+        if (context != null)
+        {
+            ipAddress = context.Connection.RemoteIpAddress?.ToString();
+        }
+
+        if (!string.IsNullOrEmpty(userAccessStatus.IpAddress))
+        {
+            DataAdded = true;
+            if (userAccessStatus.IpAddress == HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString())
+            {
+                MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
+            }
+            else
+            {
+                MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
+            }
+            StateHasChanged();
+        }
+        StateHasChanged();
+    }
+
+
+    private async Task OnSaveIpAddress()
+    {
+        MessageOutput = string.Empty;
+
+        if ((string.IsNullOrEmpty(ipAddress)))
+        {
+            MessageOutput = "Set Ip Address With Which You Want To Restrict Your Account.";
+            DataAdded = false;
+            StateHasChanged();
+            return;
+        }
+
+        else
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            userEntity.UserId = user.GetUserId() ?? 0;
+
+            if (!string.IsNullOrEmpty(ipAddress))
+            {
+                await userDTO.DeviceIpAddress(ipAddress, userEntity.UserId);
+            }
+            userAccessStatus = await userDTO.GetUserAccessStatus(userId);
+            MessageOutput = "This Device has been locked up as your primary device with IP: " + userAccessStatus.IpAddress;
+            DataAdded = true;
+            StateHasChanged();
+        }
+    }
+    private async Task OnRemoveIpAddress()
+    {
+        MessageOutput = string.Empty;
+        await userDTO.DeviceIpAddress("Null", userId);
+        MessageOutput = "Ip Address Restriction Removed.";
+        DataAdded = false;
+        StateHasChanged();
+    }
+}
+

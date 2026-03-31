@@ -6,7 +6,6 @@
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
 @inject IUserDTO userDTO
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IHttpContextAccessor HttpContextAccessor
 @inject IJSRuntime JS
 
 @rendermode InteractiveServer
@@ -16,15 +15,21 @@
 <div class="row">
     @if (!string.IsNullOrEmpty(ErrorMessage))
     {
-    <div class="@alertClass animate__fadeIn" role="alert">
-        @ErrorMessage
-    </div>
+        <div class="@alertClass animate__fadeIn" role="alert">
+            @ErrorMessage
+        </div>
     }
 </div>
 <div class="row d-flex justify-content-center align-items-cente">
-    <div class="col-6">
+    <div class="col-12">
         <LockByDateAndTime />
     </div>
+    <div class="col-12">
+        <LockByIpAddress />
+    </div>
+    <div class="col-12">
+        <LockByDeviceId />
+        </div>
 </div>
 @* <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white border-bottom-0 pt-3">
@@ -64,7 +69,7 @@
         </div>
     </div>
 </div>
- *@
+ 
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white border-bottom-0 pt-3">
         <h5 class="text-secondary mb-0"><i class="oi oi-lock-locked me-2"></i>Label Info</h5>
@@ -133,67 +138,7 @@
             </div>
         </div>
     </div>
-</div>
-<style>
-    /* 1. Increase the overall width of the switch container */
-    .wide-switch.e-switch-wrapper {
-        width: 320px; /* Adjust this value until the full text fits */
-        height: 30px;
-    }
-
-        /* 2. Adjust the 'On' text position */
-        .wide-switch.e-switch-wrapper .e-switch-on {
-            text-indent: -40px; /* Moves text so it doesn't hide under the handle */
-            font-size: 12px;
-        }
-
-        /* 3. Adjust the 'Off' text position */
-        .wide-switch.e-switch-wrapper .e-switch-off {
-            text-indent: 40px;
-            font-size: 12px;
-        }
-
-        /* 4. Ensure the handle slides far enough to the right */
-        .wide-switch.e-switch-wrapper.e-switch-active .e-switch-handle {
-            left: 300px; /* (Width of wrapper - Width of handle) */
-        }
-</style>
-
-<style>
-    /* Make the switch slightly larger and easier to hit */
-    .custom-switch-size.e-switch-wrapper {
-        width: 100px;
-        height: 32px;
-    }
-
-    /* Ensure the DateTimePicker looks modern */
-    .e-datetimepicker.e-control-wrapper.e-outline {
-        border-radius: 8px;
-    }
-
-    /* Smooth transition for the alert */
-    .animate__fadeIn {
-        animation: fadeIn 0.5s;
-    }
-
-    @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Align the switch handle correctly for the wider width */
-    .custom-switch-size.e-switch-wrapper.e-switch-active .e-switch-handle {
-        left: 68px;
-    }
-
-</style>
+</div>*@
 @code {
     private bool isDateTImeLocked = false; // Track the switch state
     private SfSwitch<bool> DateTImeLockSwitch; // Reference to the switch component
@@ -243,7 +188,7 @@
             {
                 isIpAddressLocked = true;
 
-                ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                //ip = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(ip))
                 {
                     ipAddress = "Unable to retrieve IP address.";
@@ -301,13 +246,13 @@
         if (args.Checked)
         {
             await userDTO.UpdateLockUpTo(userEntity);
-            
-                ErrorMessage = "Account locked until " + userEntity.LockUpTo.ToString();
-                alertClass = "alert alert-success";
 
-                await Task.Delay(2000);
-                ErrorMessage = string.Empty;
-                StateHasChanged();
+            ErrorMessage = "Account locked until " + userEntity.LockUpTo.ToString();
+            alertClass = "alert alert-success";
+
+            await Task.Delay(2000);
+            ErrorMessage = string.Empty;
+            StateHasChanged();
         }
         else
         {
