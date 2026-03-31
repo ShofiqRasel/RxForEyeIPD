@@ -21,14 +21,14 @@
         </p>
         @if (DataAdded == false)
         {
-            <button class="btn btn-primary" type="submit" @onclick="OnSaveTimeRestriction">
-                Set Time Restriction of My Account
+            <button class="btn btn-danger" type="submit" @onclick="OnRemoveTimeRestriction">
+                Remove Time Restriction of My Account
             </button>
         }
         else
         {
-            <button class="btn btn-danger" type="submit" @onclick="OnRemoveTimeRestriction">
-                Remove Time Restriction of My Account
+            <button class="btn btn-primary" type="submit" @onclick="OnSaveTimeRestriction">
+                Set Time Restriction of My Account
             </button>
         }
         
@@ -49,7 +49,7 @@
 
     private string MessageOutput { get; set; } = string.Empty;
     private UsersEntity userEntity = new();
-    private UserAccessStatus? userAccessStatus = new();
+    private UserAccessStatus? userAccessStatus;
     int userId;
 
     protected override async Task OnInitializedAsync()
@@ -60,7 +60,7 @@
         userId = authState.User.GetUserId() ?? 0;
         userAccessStatus = await userDTO.GetUserAccessStatus(userId);
 
-        if (!string.IsNullOrEmpty(userAccessStatus.LockUpTo))
+        if (!string.IsNullOrEmpty(userAccessStatus?.LockUpTo))
         {
             DataAdded = true;
         }

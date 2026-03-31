@@ -52,7 +52,7 @@
         userId = authState.User.GetUserId() ?? 0;
         userAccessStatus = await userDTO.GetUserAccessStatus(userId);
 
-        if (!string.IsNullOrEmpty(userAccessStatus.DeviceId))
+        if (!string.IsNullOrEmpty(userAccessStatus?.DeviceId))
         {
             DataAdded = true;
         }
@@ -86,7 +86,7 @@
             return;
         }
 
-        if (deviceData != null)
+        else
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
@@ -99,6 +99,7 @@
         }
         StateHasChanged();
     }
+    
     private async Task OnRemoveDeviceId()
     {
         deviceData = "NULL";

@@ -1,8 +1,4 @@
 ﻿@using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
-@using Syncfusion.Blazor.Buttons.Internal
-@using Syncfusion.Blazor.Charts.Internal
-@using System.Net
-@using System.Net.Sockets
 @using static RxForEyeIPD.Components.Pages.Settings.LocationMaster.Users.srvUsers
 @inject IUserDTO userDTO
 @inject AuthenticationStateProvider AuthStateProvider
@@ -54,9 +50,9 @@
     private string ipAddress { get; set; } = string.Empty;
     private string MessageOutput { get; set; } = string.Empty;
     private UsersEntity userEntity = new();
-    private string? ip { get; set; } = string.Empty;
+    //private string? ip { get; set; } = string.Empty;
 
-    private UserAccessStatus? userAccessStatus = new();
+    private UserAccessStatus? userAccessStatus;
     int userId;
 
     protected override async Task OnInitializedAsync()
@@ -66,32 +62,33 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         userId = authState.User.GetUserId() ?? 0;
         userAccessStatus = await userDTO.GetUserAccessStatus(userId);
-        var host = Dns.GetHostEntry(Dns.GetHostName());
 
-        //ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-
-        var context = HttpContextAccessor.HttpContext;
-        if (context != null)
-        {
-            ipAddress = context.Connection.RemoteIpAddress?.ToString();
-        }
-
-        if (!string.IsNullOrEmpty(userAccessStatus.IpAddress))
+        if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
         {
             DataAdded = true;
-            if (userAccessStatus.IpAddress == HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString())
-            {
-                MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
-            }
-            else
-            {
-                MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
-            }
-            StateHasChanged();
         }
+
+        DataAdded = false;
+
+        if (HttpContextAccessor.HttpContext != null)
+        {
+            ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        }
+
+        // if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        // {
+        //     DataAdded = true;
+        //     // if (userAccessStatus.IpAddress == HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString())
+        //     // {
+        //     //     MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
+        //     // }
+        //     // else
+        //     // {
+        //     //     MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
+        //     // }
+        // }
         StateHasChanged();
     }
-
 
     private async Task OnSaveIpAddress()
     {
@@ -116,11 +113,12 @@
                 await userDTO.DeviceIpAddress(ipAddress, userEntity.UserId);
             }
             userAccessStatus = await userDTO.GetUserAccessStatus(userId);
-            MessageOutput = "This Device has been locked up as your primary device with IP: " + userAccessStatus.IpAddress;
+            MessageOutput = "This Device has been locked up as your primary device with IP: " + userAccessStatus?.IpAddress;
             DataAdded = true;
             StateHasChanged();
         }
     }
+    
     private async Task OnRemoveIpAddress()
     {
         MessageOutput = string.Empty;

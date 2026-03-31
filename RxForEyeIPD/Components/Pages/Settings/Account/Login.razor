@@ -1,12 +1,11 @@
 ﻿@page "/login"
-@using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
-@using Microsoft.AspNetCore.Components.Forms
 @using System.Security.Claims
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @inject IUserDTO userDTO
 @inject NavigationManager navigationManager
+
 
 <div class="row">
     <div class="col-lg-4 offset-lg-4 pt-4 border">
@@ -39,6 +38,9 @@
 
     [SupplyParameterFromForm]
     public LoginViewModel LoginModel { get; set; } = new();
+
+    private UserAccessStatus? userAccessStatus = new();
+
 
     private async Task Authenticate()
     {
@@ -83,6 +85,16 @@
 
         var principal = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(principal);
+
+        userAccessStatus = await userDTO.GetUserAccessStatus(userAccount.UserId);
+        if (DateTime.TryParse(userAccessStatus?.LockUpTo, out DateTime lockDate))
+        {
+            if (userAccessStatus.LockUpTo != null && Convert.ToDateTime(userAccessStatus.LockUpTo) > DateTime.Now)
+            {
+                ErrorMessage = "Your account is locked until " + userAccessStatus.LockUpTo.ToString();
+                return;
+            }
+        }
 
         navigationManager.NavigateTo("/");
     }

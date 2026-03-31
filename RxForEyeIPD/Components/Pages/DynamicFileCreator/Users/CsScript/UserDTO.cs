@@ -45,8 +45,8 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
     public interface IUserDTO
     {
         Task<List<string>> GetPoliciesAsync();
-        Task<UserDTOEntity> GetUserDetail(string userName, string plainPassword);
-        Task<UserAccessStatus> GetUserAccessStatus(int UserId);
+        Task<UserDTOEntity?> GetUserDetail(string userName, string plainPassword);
+        Task<UserAccessStatus?> GetUserAccessStatus(int UserId);
         Task<List<UserAccountPolicy>> GetuserAccountPolicies(int userId);
         Task UpdateLockUpTo(UsersEntity PassUsers);
         Task DeviceInfo(string deviceInfo, int UserId);
@@ -105,15 +105,17 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 
                     // ✅ verify password
                     if (!BCrypt.Net.BCrypt.Verify(plainPassword, storedHash))
-                        return null;
-
-                    DateTime? lockUpTo = dr["LockUpTo"] as DateTime?;
-                    // Block the user ONLY if the lock time is still active (in the future)
-                    if (lockUpTo != null && lockUpTo > DateTime.Now)
                     {
-                        // You might want to log this or throw a specific exception like "Account Locked"
                         return null;
                     }
+
+                    //DateTime? lockUpTo = dr["LockUpTo"] as DateTime?;
+                    //// Block the user ONLY if the lock time is still active (in the future)
+                    //if (lockUpTo != null && lockUpTo > DateTime.Now)
+                    //{
+                    //    // You might want to log this or throw a specific exception like "Account Locked"
+                    //    return null;
+                    //}
 
                     // ✅ return valid user
                     return new UserDTOEntity
@@ -154,9 +156,10 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
                 {
                     return new UserAccessStatus
                     {
-                        DeviceId = dr["DeviceId"]?.ToString(),
-                        IpAddress = dr["IpAddress"]?.ToString() ?? "",
-                        LockUpTo = dr["LockUpTo"]?.ToString() ?? ""
+                        DeviceId = dr["DeviceId"] as string ?? string.Empty,
+                        IpAddress = dr["IpAddress"] as string ?? string.Empty,
+                        // For dates, it's safer to check DBNull explicitly
+                        LockUpTo = dr.IsDBNull(dr.GetOrdinal("LockUpTo")) ? DateTime.Now.ToString(): dr["LockUpTo"].ToString()
                     };
                 }
 
@@ -212,7 +215,7 @@ namespace RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
             {
                 CommandType = CommandType.StoredProcedure
             };
-            cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = (object) PassUsers.LockUpTo ?? DBNull.Value;
+            cmd.Parameters.Add("@LockUpTo", SqlDbType.DateTime).Value = (object?)PassUsers.LockUpTo ?? DBNull.Value;
             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PassUsers.UserId;
             await con.OpenAsync();
             await cmd.ExecuteNonQueryAsync();
