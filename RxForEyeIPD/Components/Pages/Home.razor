@@ -1,6 +1,12 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authentication
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @using System.Security.Claims
+@inject IUserDTO userDTO
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager navigationManager
+
 
 <PageTitle>Home</PageTitle>
 
@@ -22,3 +28,54 @@ Welcome to your new app.
         </span>
     </Authorized>
 </AuthorizeView>
+@code{
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; } = default!;
+
+    private bool DataAdded = false; // Track the switch state
+    private string ipAddress { get; set; } = string.Empty;
+    private string MessageOutput { get; set; } = string.Empty;
+    //private UsersEntity userEntity = new();
+
+    private UserAccessStatus? userAccessStatus;
+    int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId = authState.User.GetUserId() ?? 0;
+        userAccessStatus = await userDTO.GetUserAccessStatus(userId);
+
+        if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        {
+            DataAdded = true;
+        }
+
+        DataAdded = false;
+
+        if (HttpContextAccessor.HttpContext != null)
+        {
+            ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        }
+
+        if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        {
+            if (userAccessStatus.IpAddress == ipAddress)
+            {
+                MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
+                DataAdded = true;
+            }
+            else
+            {
+                MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
+                
+                if (HttpContext?.User?.Identity?.IsAuthenticated == true)
+                {
+                    await HttpContext.SignOutAsync();
+                    navigationManager.NavigateTo("/login");
+                }
+            }
+        }
+        StateHasChanged();
+    }
+}

@@ -75,18 +75,18 @@
             ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         }
 
-        // if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
-        // {
-        //     DataAdded = true;
-        //     // if (userAccessStatus.IpAddress == HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString())
-        //     // {
-        //     //     MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
-        //     // }
-        //     // else
-        //     // {
-        //     //     MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
-        //     // }
-        // }
+        if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        {
+            if (userAccessStatus.IpAddress == ipAddress)
+            {
+                MessageOutput = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
+                DataAdded = true;
+            }
+            else
+            {
+                MessageOutput = "This Device is not your primary device. Your primary device is with Ip: " + userAccessStatus.IpAddress;
+            }
+        }
         StateHasChanged();
     }
 
