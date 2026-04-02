@@ -7,27 +7,10 @@
 
 
 window.getDeviceInfo = () => {
-    let deviceId = localStorage.getItem("deviceId");
-
-        if (!deviceId) {
-            deviceId = crypto.randomUUID(); // ✅ unique per browser/device
-            localStorage.setItem("deviceId", deviceId);
-        }
-
-        return deviceId;
+    let id = localStorage.getItem('DeviceUniqueId');
+    if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem('DeviceUniqueId', id);
+    }
+    return id;
 };
-
-//window.getDeviceInfo = function syncDeviceId() {
-//    let deviceId = localStorage.getItem("deviceId");
-//    if (!deviceId) {
-//        deviceId = crypto.randomUUID();
-//        localStorage.setItem("deviceId", deviceId);
-//    }
-//    // Force the value into the hidden input so Blazor captures it
-//    const el = document.getElementById('hiddenDeviceId');
-//    if (el) {
-//        el.value = deviceId;
-//        // Trigger an 'input' event so Blazor's binding system sees the change
-//        el.dispatchEvent(new Event('input', { bubbles: true }));
-//    }
-//}

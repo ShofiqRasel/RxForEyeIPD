@@ -2,9 +2,9 @@
 @using Microsoft.AspNetCore.Authentication
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @using System.Security.Claims
-@inject IUserDTO userDTO
+@* @inject IUserDTO userDTO
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor HttpContextAccessor *@
 @inject NavigationManager navigationManager
 
 
@@ -28,7 +28,7 @@ Welcome to your new app.
         </span>
     </Authorized>
 </AuthorizeView>
-@code{
+@* @code{
     [CascadingParameter]
     public HttpContext HttpContext { get; set; } = default!;
 
@@ -79,3 +79,4 @@ Welcome to your new app.
         StateHasChanged();
     }
 }
+ *@

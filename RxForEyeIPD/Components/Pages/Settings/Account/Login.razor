@@ -5,6 +5,8 @@
 @using RxForEyeIPD.Components.Pages.DynamicFileCreator.Users.CsScript
 @inject IUserDTO userDTO
 @inject NavigationManager navigationManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JS
 
 
 <div class="row">
@@ -30,6 +32,7 @@
     </div>
 </div>
 
+
 @code {
     [CascadingParameter]
     public HttpContext HttpContext { get; set; } = default!;
@@ -41,6 +44,27 @@
 
     private UserAccessStatus? userAccessStatus = new();
 
+    private string? deviceData;
+    private string ipAddress { get; set; } = string.Empty;
+
+
+    /// <summary>
+    /// এই লগইন ফাংশনটি ব্যবহারকারীর ইউজারনেম এবং পাসওয়ার্ড যাচাই করে,
+    /// তারপর ডিভাইস আইডি চেক করে এবং যদি সবকিছু সঠিক থাকে তবে ব্যবহারকারীকে লগইন করে।
+    /// যদি কোন ত্রুটি ঘটে, তাহলে একটি উপযুক্ত ত্রুটি বার্তা দেখানো হবে।
+    /// এখানে ডিভাইস আইডি চেক করা হচ্ছে যাতে নিশ্চিত করা যায় যে ব্যবহারকারী শুধুমাত্র নিবন্ধিত ডিভাইস থেকে লগইন করতে পারবে,
+    /// যা নিরাপত্তা বাড়ায়। এছাড়াও, যদি ব্যবহারকারীর অ্যাকাউন্ট লক করা থাকে, তাহলে সেই তথ্যও দেখানো হবে।
+    /// এখানে যাচাই বাছাই এর কাজ করার পরথমে ইউজারনেম এবং পাসওয়ার্ড চেক করা হচ্ছে,
+    /// তারপর ডিভাইস আইডি চেক করা হচ্ছে এবং সবশেষে অ্যাকাউন্ট লক স্ট্যাটাস চেক করা হচ্ছে।
+    /// ধাপগুলো হলো
+    /// ০১. আপটু কয়টা পর্যন্ত ইউজার তার একাউন্ট লক করে রেখেছ।
+    /// ০২. ইউজার যে ডিভাইস দিয়ে তার একাউন্ট লক্ করেছে লগইন করার আগে নিশ্চিত হচ্ছে এই ডিভাইটি সেই ডিভাইস কিনা।
+    /// ০৩. ইউজার যে ডিভাইস এর আইপি দিয়ে একাউন্ট লক্ করেছে লগইন করার আগে নিশ্চিত হচ্ছে এই ডিভাইটি সেই ডিভাইস কিনা।
+    /// ০৪. ইউজারনেম এবং পাসওয়ার্ড চেক করা হচ্ছে।
+    /// ০৫. ইউজারনেম এবং পাসওয়ার্ড সঠিক হলে, ইউজারের রোল এবং অন্যান্য পলিসি ক্লেইম যোগ করা হচ্ছে।
+    /// ০৬. ইউজারকে লগইন করা হচ্ছে এবং হোম পেজে রিডাইরেক্ট করা হচ্ছে।
+    /// </summary>
+    /// <returns></returns>
 
     private async Task Authenticate()
     {
@@ -62,6 +86,48 @@
             return;
         }
 
+        /// ডেটাবেজ থেকে ইউজারের সেভ করা আইপি, কতক্ষণ ইউজারের একাউন্ট লক করা থাকবে এবং ডিভাইস আইডি নিয়ে আসা হচ্ছে।
+        userAccessStatus = await userDTO.GetUserAccessStatus(userAccount.UserId);
+
+        // যদি ইউজারের একাউন্টে একটি নির্দিষ্ট ডিভাইস আইডি সেভ করা থাকে, তাহলে লগইন করার সময় 
+        // যে ডিভাইস থেকে চেষ্টা করা হচ্ছে তার আইডি সেই সেভ করা আইডির সাথে মেলানো হচ্ছে। যদি মেলে না, 
+        // তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
+        if (userAccessStatus != null && !string.IsNullOrEmpty(userAccessStatus.DeviceId))
+        {
+            if (userAccessStatus.DeviceId != deviceData)
+            {
+                ErrorMessage = "Security Alert: This device is not registered for this account.";
+                return; 
+            }
+        }
+
+        // যদি ইউজারের একাউন্ট একটি নিদিষ্ট সময় পর্যন্ত লক করা থাকে, তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
+        if (DateTime.TryParse(userAccessStatus?.LockUpTo, out DateTime lockDate))
+        {
+            if (userAccessStatus.LockUpTo != null && Convert.ToDateTime(userAccessStatus.LockUpTo) > DateTime.Now)
+            {
+                ErrorMessage = "Your account is locked until " + userAccessStatus.LockUpTo.ToString();
+                return;
+            }
+        }
+
+        // যদি ইউজারের একাউন্ট একটি নির্দষ্টি আইপি থেকে লক করা থাকে, তাহলে লগইন করার সময় যে আইপি থেকে চেষ্টা করা হচ্ছে 
+        // তার আইপি সেই সেভ করা আইপির সাথে মেলানো হচ্ছে। যদি মেলে না, তাহলে একটি ত্রুটি বার্তা দেখানো হবে এবং প্রক্রিয়া বন্ধ হয়ে যাবে।
+
+        if (HttpContextAccessor.HttpContext != null)
+        {
+            ipAddress = HttpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        }
+
+        if (!string.IsNullOrEmpty(userAccessStatus?.IpAddress))
+        {
+            if (userAccessStatus.IpAddress != ipAddress)
+            {
+                ErrorMessage = "This Device is your primary device with Ip: " + userAccessStatus.IpAddress;
+                return;
+            }
+        }
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, userAccount.UserName),
@@ -80,22 +146,52 @@
             claims.Add(new Claim(policy.AssingnUserPolicy!, "true"));
         }
 
+
+
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
 
         var principal = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(principal);
 
-        userAccessStatus = await userDTO.GetUserAccessStatus(userAccount.UserId);
-        if (DateTime.TryParse(userAccessStatus?.LockUpTo, out DateTime lockDate))
-        {
-            if (userAccessStatus.LockUpTo != null && Convert.ToDateTime(userAccessStatus.LockUpTo) > DateTime.Now)
-            {
-                ErrorMessage = "Your account is locked until " + userAccessStatus.LockUpTo.ToString();
-                return;
-            }
-        }
 
         navigationManager.NavigateTo("/");
+    }
+
+
+    /// <summary>
+    /// আপনার deviceData কেন null দেখাচ্ছে, তার মূল কারণ হলো Blazor Lifecycle Order (ব্লেজর লাইফসাইকেল ক্রম) এবং Static vs. Interactive Rendering-এর কাজ করার পদ্ধতি।
+
+    //     আপনার কোডে আপনি OnInitializedAsync-এর ভেতরে deviceData ব্যবহার করার চেষ্টা করছেন, কিন্তু আপনি এটার মান সেট বা অ্যাসাইন করছেন OnAfterRenderAsync-এর ভেতরে। নিচে এর বিস্তারিত কারণ দেওয়া হলো:
+
+    // ১. লাইফসাইকেল গ্যাপ(The Lifecycle Gap)
+    // Blazor একটি নির্দিষ্ট ক্রম বা সিকোয়েন্স অনুসরণ করে। আপনার পেজ লোড হওয়ার সময় যা ঘটে:
+
+    // OnInitializedAsync রান হয়: আপনার কোড চেক করে if (userAccessStatus.DeviceId != deviceData)। ঠিক এই মুহূর্তে deviceData এর মান null থাকে, কারণ তখন পর্যন্ত কোনো JavaScript এক্সিকিউট(রান) হয়নি।
+
+    // HTML রেন্ডার হয়: পেজটি ব্রাউজারে পাঠানো হয়।
+
+    // OnAfterRenderAsync রান হয়: এখন, এবং শুধুমাত্র এখন ব্রাউজারটি JavaScript - এর সাথে কথা বলার জন্য প্রস্তুত হয়। আপনি getDeviceInfo কল করেন এবং deviceData অবশেষে একটি মান পায়।
+
+    // লজিক আগেই শেষ হয়ে গেছে: যতক্ষণ পর deviceData একটি মান পায়, তার আগেই OnInitializedAsync-এ আপনার সিকিউরিটি চেক শেষ হয়ে গেছে। যেহেতু এটি ডাটাবেজ আইডি-কে null-এর সাথে তুলনা করেছিল, তাই এটি "Unauthorized" ব্লকটি এড়িয়ে যায়।
+
+    // ২. প্রি-রেন্ডারিং(The "Two-Visit" Problem)
+    // আপনি যদি @rendermode InteractiveServer ব্যবহার করেন, তবে Blazor আসলে আপনার OnInitializedAsync-কে দুইবার রান করায়:
+
+    // প্রথমবার: সার্ভারে(প্রাথমিক HTML তৈরি করার জন্য)। এখানে JavaScript কাজ করে না। তাই JS.InvokeAsync ব্যর্থ হবে অথবা স্কিপ হয়ে যাবে।
+
+    // দ্বিতীয়বার: যখন SignalR কানেকশন (সার্কিট) প্রতিষ্ঠিত হয়।
+
+    //এমনকি দ্বিতীয়বার রান হওয়ার সময়ও, OnAfterRenderAsync শুরু হওয়ার আগেই OnInitializedAsync সবসময় শেষ হয়ে যায়। এ কারণেই আপনি সরাসরি OnInitializedAsync-এ JavaScript থেকে পাওয়া কোনো ভ্যালু ব্যবহার করতে পারেন না।
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Capture the device ID immediately when the page loads
+            deviceData = await JS.InvokeAsync<string>("getDeviceInfo");
+        }
     }
 }
