@@ -38,6 +38,12 @@ if not exists (select * from UserRole where UserRoleName = @UserRoleName and  Cr
     End -- if not exists end 
 End 
 Go 
+
+exec ProcInsertUserRole 'Super Admin', 1
+exec ProcInsertUserRole 'Admin', 1
+exec ProcInsertUserRole 'Guest', 1
+go
+
 if object_id ('ProcUpdateUserRole') is not null  
 drop Proc ProcUpdateUserRole 
 Go 

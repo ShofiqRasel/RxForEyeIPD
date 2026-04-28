@@ -1,3 +1,7 @@
+use db_RxForEyeIPD
+go
+
+
 if object_id ('Users') is not null  
 drop table Users 
 Create Table Users 
